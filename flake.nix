@@ -20,30 +20,50 @@
     let
       system = "x86_64-linux";
 
-      # defaults
-      defaultUsername = "richen";
-      defaultGitUser = "richard604";
-      defaultGitEmail = "56615615+richen604@users.noreply.github.com";
+      username = "editme";
+      gitUser = "editme";
+      gitEmail = "editme";
+      host = "editme";
 
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-
-        # allow all unfree packages no matter the license status, this is potentially dangerous and should be used with caution
         config.allowUnfreePredicate = _: true;
       };
 
-      mkSystem =
-        {
-          host,
-          home,
-          username ? defaultUsername,
-          gitUser ? defaultGitUser,
-          gitEmail ? defaultGitEmail,
-        }:
-        nixpkgs.lib.nixosSystem {
-          inherit system;
-          inherit pkgs;
+      mkVM =
+        { nixosSystem, ... }:
+        nixosSystem.extendModules {
+          modules = [
+            (
+              { config, pkgs, ... }:
+              {
+                virtualisation.vmVariant = {
+                  virtualisation = {
+                    memorySize = 8192; # 8GB RAM
+                    cores = 4;
+                    qemu.options = [
+                      "-vga none"
+                      "-device virtio-vga-gl"
+                      "-display gtk,gl=on"
+                      "-accel kvm"
+                    ];
+                  };
+                  services.xserver.displayManager.autoLogin = {
+                    enable = true;
+                    user = username;
+                  };
+                };
+              }
+            )
+          ];
+        };
+
+    in
+    {
+      nixosConfigurations = {
+        hyprdots-nix = nixpkgs.lib.nixosSystem {
+          inherit system pkgs;
 
           specialArgs = {
             inherit
@@ -53,70 +73,47 @@
               host
               ;
           };
+
           modules = [
-            ./hosts/${host}/configuration.nix
+            ./configuration.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.${username} = import ./homes/${home}/home.nix;
+              home-manager.users.${username} = import ./home.nix;
               home-manager.extraSpecialArgs = {
-                inherit
-                  username
-                  gitUser
-                  gitEmail
-                  ;
+                inherit username gitUser gitEmail;
               };
             }
           ];
         };
-      mkHome =
-        {
-          home,
-          username ? defaultUsername,
-          gitUser ? defaultGitUser,
-          gitEmail ? defaultGitEmail,
-        }:
-        home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./homes/${home}/home.nix ];
-          extraSpecialArgs = {
-            inherit
-              username
-              gitUser
-              gitEmail
-              ;
+
+        hyprdots-nix-vm = mkVM {
+          nixosSystem = nixpkgs.lib.nixosSystem {
+            inherit system pkgs;
+            specialArgs = {
+              inherit
+                username
+                gitUser
+                gitEmail
+                host
+                ;
+            };
+            modules = [
+              ./configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.${username} = import ./home.nix;
+                home-manager.extraSpecialArgs = {
+                  inherit username gitUser gitEmail;
+                };
+              }
+            ];
           };
         };
-    in
-    {
-      nixosConfigurations = {
-        "richen@cedar" = mkSystem {
-          host = "cedar";
-          home = "richendots";
-          username = "richen";
-        };
-
-        # feel free to change the username
-        "someone@hyprdots-host" = mkSystem {
-          host = "hyprdots-host";
-          home = "hyprdots";
-          username = "someone";
-        };
-
-        # feel free to change the username
-        "richen@hyprdots-host" = mkSystem {
-          host = "hyprdots-host";
-          home = "richendots";
-          username = "richen";
-        };
+        packages.${system}.default = self.nixosConfigurations.hyprdots-nix-vm;
       };
-
-      homeConfigurations = {
-        richendots = mkHome { home = "richendots"; };
-        hyprdots = mkHome { home = "hyprdots"; };
-      };
-
-      nixosConfigurations.nixos = self.nixosConfigurations."richen@cedar";
     };
 }

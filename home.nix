@@ -14,7 +14,7 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
-    ../common/hyprdots-build.nix
+    ./modules/hyprdots-build.nix
   ];
 
   # TODO: hyprdots-build module
@@ -24,7 +24,7 @@
   };
 
   # enabling this will create files in .config/hypr
-  # TODO: hyprdots-prepare module
+  # we will be replacing this with the hyprdots-build
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -56,7 +56,7 @@
     nwg-look
     dolphin
     libinput-gestures
-    (callPackage ../common/pokemon-colorscripts.nix { })
+    (callPackage ./modules/pokemon-colorscripts.nix { })
   ];
 
   qt = {
