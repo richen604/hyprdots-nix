@@ -19,8 +19,8 @@
 
   # TODO: hyprdots-build module
   modules.hyprdots-build = {
-    enable = false;
-    cleanBuild = false;
+    enable = true;
+    cleanBuild = true;
   };
 
   # enabling this will create files in .config/hypr
