@@ -136,5 +136,17 @@
 
       };
       packages.${system}.default = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
+
+      homeConfigurations = {
+        ${username} = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            ./home.nix
+          ];
+          extraSpecialArgs = {
+            inherit username gitUser gitEmail;
+          };
+        };
+      };
     };
 }
