@@ -13,6 +13,10 @@
   home.username = username;
   home.homeDirectory = "/home/${username}";
 
+  home.sessionVariables = {
+    PATH = "$HOME/.local/share/bin:$PATH";
+  };
+
   imports = [
     ./modules/hyprdots-build.nix
   ];

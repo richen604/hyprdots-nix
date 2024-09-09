@@ -41,12 +41,12 @@ in
       description = "List of files or folders to install from Hyprdots";
     };
 
-    # theme = mkOption {
-    #   type = types.str;
-    #   default = "Catppuccin-Mocha";
-    #   example = "Catppuccin-Mocha";
-    #   description = "Theme to install from Hyprdots";
-    # };
+    theme = mkOption {
+      type = types.str;
+      default = "Catppuccin-Mocha";
+      example = "Catppuccin-Mocha";
+      description = "Theme to install from Hyprdots";
+    };
 
     cleanBuild = mkOption {
       type = types.bool;
@@ -84,7 +84,6 @@ in
 
       {
         ".hyprdots-version".text = cfg.hyprdotsRepo.rev;
-        ".local/share/bin/.keep".text = "";
       }
 
       (
@@ -104,24 +103,46 @@ in
           }) copyScripts
         )
       )
+
+      # link theme files from fetchThemeFiles for apply theme to use
+      (
+        let
+          themeDir = fetchThemeFiles cfg.theme;
+          linkTheme = builtins.attrNames (builtins.readDir themeDir);
+        in
+        builtins.listToAttrs (
+          map (file: {
+            name = ".config/hypr/${file}";
+            value = {
+              source = "${themeDir}/${file}";
+              recursive = true;
+            };
+          }) linkTheme
+        )
+      )
     ];
 
-    # # apply theme
-    # home.activation = {
-    #   applyTheme =
-    #     lib.hm.dag.entryAfter
-    #       [
-    #         "reloadSystemd"
-    #       ]
-    #       ''
-    #         $DRY_RUN_CMD ${pkgs.bash}/bin/bash -c '
-    #           if [[ -f "$HOME/.local/share/bin/themepatcher.sh" ]]; then
-    #             "$HOME/.local/share/bin/themepatcher.sh" $VERBOSE_ARG "${cfg.theme}" "${fetchThemeFiles cfg.theme}" --skipcaching
-    #           else
-    #             echo "Warning: themepatcher.sh not found. Skipping theme application."
-    #           fi
-    #         '
-    #       '';
-    # };
+    # apply theme
+    home.activation = {
+      # TODO: nixify themes. this just runs themepatcher.sh with the supplied themes. there seems to be some issues with the theme preview in switcher. restore_cfg.sh won't work because nix is a readonly FS. would need to fully manage themes with nix
+      applyTheme = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+        export PATH="${
+          lib.makeBinPath [
+            pkgs.gawk
+            pkgs.coreutils
+            pkgs.gnused
+            pkgs.gnutar
+            pkgs.gzip
+            pkgs.parallel
+            pkgs.bash
+            pkgs.imagemagick
+          ]
+        }:$PATH"
+        ${pkgs.bash}/bin/bash $HOME/.local/share/bin/themepatcher.sh "${
+          lib.strings.replaceStrings [ "-" ] [ " " ] cfg.theme
+        }" "${fetchThemeFiles cfg.theme}"
+      '';
+
+    };
   };
 }
