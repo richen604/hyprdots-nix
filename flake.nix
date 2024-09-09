@@ -24,6 +24,9 @@
       gitUser = "editme";
       gitEmail = "editme";
       host = "editme";
+
+      # you need to change this with passwd when you boot
+      # root will have the same password
       defaultPassword = "editme";
 
       pkgs = import nixpkgs {
@@ -42,44 +45,34 @@
                 virtualisation.libvirtd.enable = true;
                 virtualisation.vmVariant = {
                   virtualisation = {
-                    memorySize = 8192; # 8GB RAM
+                    memorySize = 8192;
                     cores = 4;
+                    diskSize = 20480;
                     qemu = {
                       options = [
-                        "-vga none"
-                        "-device virtio-gpu-gl-pci"
-                        "-display gtk,gl=on"
-                        "-device virtio-tablet-pci"
-                        "-device virtio-keyboard-pci"
-                        "-display gtk,gl=on,show-cursor=on"
+                        "-vga virtio"
                       ];
                     };
                   };
-                  services.xserver.displayManager.autoLogin = {
-                    enable = true;
-                    user = username;
+                  services.xserver = {
+                    displayManager.autoLogin = {
+                      enable = true;
+                      user = username;
+                    };
+                    videoDrivers = [ "virtio" ];
                   };
 
-                  services.spice-vdagentd.enable = true;
-                };
-                environment.sessionVariables = {
-                  WLR_NO_HARDWARE_CURSORS = "1";
-                  WLR_RENDERER_ALLOW_SOFTWARE = "1";
                 };
                 users.users.${username} = {
                   initialPassword = defaultPassword;
-                  extraGroups = [ "libvirtd" ];
                 };
                 environment.systemPackages = with pkgs; [
                   open-vm-tools
-                  virt-manager
-                  OVMF
-                  qemu
-                  virglrenderer
-                  xorg.xf86inputvmmouse
+                  spice-vdagent
                 ];
-                virtualisation.libvirtd.qemu.ovmf.enable = true;
-                virtualisation.libvirtd.qemu.runAsRoot = true;
+                services.qemuGuest.enable = true;
+                services.spice-vdagentd.enable = true;
+
               }
             )
           ];
