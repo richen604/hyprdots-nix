@@ -18,8 +18,9 @@ in
 
   config = mkIf cfg.enable {
 
+    # This script will run on boot and install hyde-cli and hyprdots.
     # TODO: pull a specific commit for both repos to ensure its reproducable
-    # TODO: have this script exec through kitty on first boot
+    # TODO: SDDM
     home.file."hyprdots-first-boot.sh" = {
       executable = true;
       text = ''
@@ -38,6 +39,9 @@ in
 
         # link hyde-install to hyprdots, it will error so we catch it
         $HOME/.local/bin/Hyde-install -d $HOME/hyprdots --no-package --link || true
+
+        # remove zshrc so hyprdots can overwrite it
+        rm $HOME/.zshrc
 
         # restore hyprdots configs
         sed -i '/continue 2/d' $HOME/hyprdots/Scripts/restore_cfg.sh 
@@ -58,14 +62,18 @@ in
         # apply theme
         ~/hyprdots/Scripts/themepatcher.sh "Catppuccin Mocha" "https://github.com/prasanthrangan/hyde-themes/tree/Catppuccin-Mocha"
 
+        # remove exec-once = kitty from hyprland.conf
+        sed -i '/exec-once = kitty $HOME\/hyprdots-first-boot.sh/d' $HOME/.config/hypr/hyprland.conf
+
+        # remove exec-once = touch $HOME/.zshrc from hyprland.conf
+        sed -i '/exec-once = touch $HOME\/.zshrc/d' $HOME/.config/hypr/hyprland.conf
+
+        # Append additional paths to PATH in .zshrc
+        echo 'export PATH="$PATH:$HOME/.local/bin:$HOME/.local/share/bin:$HOME/.local/lib/hyde-cli/:$HOME/.nix-profile/bin"' >> $HOME/.zshrc
+
+        reboot
       '';
     };
-    home.sessionPath = [
-      "$HOME/.local/bin"
-      "$HOME/.local/share/bin"
-      "$HOME/.local/lib/hyde-cli/"
-      "$HOME/.nix-profile/bin"
-    ];
 
   };
 

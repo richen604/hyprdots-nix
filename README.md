@@ -62,9 +62,12 @@ installation is available as a nixos host and vm.
     };
     ```
   - build the system with `nix run .` or `sudo nixos-rebuild switch --flake .#hyprdots-nix`
-    - on boot, run `./hyprdots-first-boot.sh` and follow the instructions
-    - will install Catppuccin Mocha theme by default. feel free to run `themepatcher.sh "Theme Name" "Theme URL"` to add another.
-    - reboot
+    - terminal will open and run the install process. select y for all and overwrite all configs. will automatically reboot.
+    - this installs Catppuccin Mocha theme by default. feel free to run `themepatcher.sh "Theme Name" "Theme URL"` to add another.
+  
+  > [!NOTE]
+  > - roti is a bit buggy, style 7 is recommended
+
 
 <br>
 
@@ -131,7 +134,6 @@ nix run . # or sudo nixos-rebuild switch --flake .#hyprdots-nix
     - [ ] roti fixes
     - [ ] sddm
 - [ ] cleanup. remove all unneeded packages to produce the minimal hyprdots configuration
-- [ ] migrate installation dependencies to home-manager 
 
 ## troubleshooting & Issues
 

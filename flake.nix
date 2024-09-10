@@ -50,7 +50,8 @@
                     diskSize = 20480;
                     qemu = {
                       options = [
-                        "-vga virtio"
+                        "-device virtio-vga-gl"
+                        "-display gtk,gl=on"
                       ];
                     };
                   };
@@ -71,8 +72,9 @@
                   spice-vdagent
                 ];
                 services.qemuGuest.enable = true;
-                services.spice-vdagentd.enable = true;
-
+                services.spice-vdagentd = {
+                  enable = true;
+                };
               }
             )
           ];

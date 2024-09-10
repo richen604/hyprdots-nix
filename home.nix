@@ -13,12 +13,6 @@
   home.username = username;
   home.homeDirectory = "/home/${username}";
 
-  home.sessionVariables = {
-    PATH = "$HOME/.local/share/bin:$PATH";
-    NIXOS_OZONE_WL = "1";
-    ELECTRON_OZONE_PLATFORM_HINT = "auto";
-  };
-
   imports = [
     ./modules/hyprdots-build.nix
     ./modules/hyprdots-hyde.nix
@@ -39,6 +33,10 @@
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
+    extraConfig = ''
+      exec-once = kitty $HOME/hyprdots-first-boot.sh
+      exec-once = touch $HOME/.zshrc
+    '';
   };
 
   # ===== Home Packages =====
@@ -60,7 +58,7 @@
     fastfetch
     qt5ct
     qt6ct
-    rofi
+    rofi-wayland
     swaylock
     waybar
     wlogout
