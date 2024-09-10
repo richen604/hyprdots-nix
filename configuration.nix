@@ -37,8 +37,10 @@
       powerOnBoot = true;
     };
   };
+
   # ===== Filesystems =====
-  # TODO: Add Drives
+  # USER EDITABLE ADD FILESYSTEMS HERE
+
   # ===== Security =====
   security = {
     polkit.enable = true;
@@ -274,28 +276,6 @@
     wl-clipboard
     grim
     grimblast
-
-    # Custom Packages
-    # obs-studio
-    # hyprshade
-    # vesktop
-    # desktop-file-utils
-    # nixfmt-rfc-style
-    # nil
-    # thefuck
-    # kmod
-    # spotify
-    # qemu
-    # virt-manager
-    # virt-viewer
-    # spice-gtk
-    # win-virtio
-    # win-spice
-    # OVMFFull
-    # looking-glass-client
-    # nodejs
-    # libvirt
-    # OVMF
   ];
 
   # ===== Program Configurations =====
@@ -312,7 +292,6 @@
       syntaxHighlighting.enable = true;
       shellAliases = {
         ll = "ls -l";
-        rb = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles/.";
       };
       ohMyZsh = {
         enable = true;

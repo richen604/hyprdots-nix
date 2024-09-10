@@ -133,9 +133,11 @@
             ];
           };
         };
-
       };
-      packages.${system}.default = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
+      packages.${system} = {
+        default = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
+        hyprdots-nix-vm = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
+      };
 
       homeConfigurations = {
         ${username} = home-manager.lib.homeManagerConfiguration {

@@ -15,16 +15,23 @@
 
   home.sessionVariables = {
     PATH = "$HOME/.local/share/bin:$PATH";
+    NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
   };
 
   imports = [
     ./modules/hyprdots-build.nix
+    ./modules/hyprdots-hyde.nix
   ];
 
   # TODO: hyprdots-build module
-  modules.hyprdots-build = {
+  # modules.hyprdots-build = {
+  #   enable = true;
+  #   cleanBuild = true;
+  # };
+
+  modules.hyprdots-hyde = {
     enable = true;
-    cleanBuild = true;
   };
 
   # enabling this will create files in .config/hypr
