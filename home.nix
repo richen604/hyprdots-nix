@@ -14,8 +14,7 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
-    ./modules/hyprdots-build.nix
-    ./modules/hyprdots-hyde.nix
+    ./modules/hyprdots/hyprdots.nix
   ];
 
   # TODO: hyprdots-build module
@@ -24,7 +23,11 @@
   #   cleanBuild = true;
   # };
 
-  modules.hyprdots-hyde = {
+  # modules.hyprdots-hyde = {
+  #   enable = true;
+  # };
+
+  programs.hyprdots = {
     enable = true;
   };
 
