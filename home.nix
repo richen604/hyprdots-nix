@@ -15,31 +15,24 @@
 
   imports = [
     ./modules/hyprdots/hyprdots.nix
+    ./modules/hyprdots-hyde.nix
   ];
 
-  # TODO: hyprdots-build module
-  # modules.hyprdots-build = {
-  #   enable = true;
-  #   cleanBuild = true;
-  # };
-
-  # modules.hyprdots-hyde = {
-  #   enable = true;
-  # };
-
-  programs.hyprdots = {
+  modules.hyprdots-hyde = {
     enable = true;
   };
 
-  # enabling this will create files in .config/hypr
-  # we will be replacing this with the hyprdots-build
+  # programs.hyprdots = {
+  #   enable = true;
+  # };
+
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    # extraConfig = ''
-    #   exec-once = kitty $HOME/hyprdots-first-boot.sh
-    #   exec-once = touch $HOME/.zshrc
-    # '';
+    extraConfig = ''
+      exec-once = kitty $HOME/hyprdots-first-boot.sh
+      exec-once = touch $HOME/.zshrc
+    '';
   };
 
   # ===== Home Packages =====
