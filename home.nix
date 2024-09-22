@@ -36,10 +36,10 @@
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    extraConfig = ''
-      exec-once = kitty $HOME/hyprdots-first-boot.sh
-      exec-once = touch $HOME/.zshrc
-    '';
+    # extraConfig = ''
+    #   exec-once = kitty $HOME/hyprdots-first-boot.sh
+    #   exec-once = touch $HOME/.zshrc
+    # '';
   };
 
   # ===== Home Packages =====
@@ -71,14 +71,6 @@
     (callPackage ./modules/pokemon-colorscripts.nix { })
   ];
 
-  qt = {
-    enable = true;
-    platformTheme.name = "gtk";
-    style = {
-      name = "adwaita-dark";
-      package = pkgs.adwaita-qt;
-    };
-  };
   programs = {
     home-manager.enable = true;
     git = {
@@ -88,7 +80,6 @@
     };
     waybar = {
       enable = true;
-      package = pkgs.waybar;
     };
     neovim = {
       enable = true;

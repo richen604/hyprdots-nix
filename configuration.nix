@@ -13,18 +13,21 @@
   ];
 
   # ===== Boot Configuration =====
-  boot = {
-    loader = {
-      efi.canTouchEfiVariables = true;
-      grub = {
-        enable = true;
-        device = "nodev";
-        efiSupport = true;
-        useOSProber = true;
-      };
-    };
-    kernelPackages = pkgs.linuxPackages_zen;
-  };
+  boot.loader.systemd-boot.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+
+  #! Enable grub below, note you will have to change to the new bios boot option for settings to apply
+  # boot = {
+  #   loader = {
+  #     efi.canTouchEfiVariables = true;
+  #     grub = {
+  #       enable = true;
+  #       device = "nodev";
+  #       efiSupport = true;
+  #       useOSProber = true;
+  #     };
+  #   };
+  # };
 
   # ===== Hardware Configuration =====
   hardware = {
@@ -312,22 +315,17 @@
       enableCompletion = true;
       autosuggestions.enable = true;
       syntaxHighlighting.enable = true;
-      shellAliases = {
-        ll = "ls -l";
-      };
       ohMyZsh = {
         enable = true;
         plugins = [
           "git"
+          "history"
+          "sudo"
         ];
-        theme = "robbyrussell";
       };
-      shellInit = ''
-        if [ -d $HOME/.nix-profile/share/applications ]; then
-          XDG_DATA_DIRS="$HOME/.nix-profile/share:$XDG_DATA_DIRS"
-        fi
-      '';
+      promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
     };
+
   };
 
   # ===== Font Configuration =====

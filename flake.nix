@@ -8,6 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    stylix.url = "github:danth/stylix";
   };
 
   outputs =
@@ -15,6 +16,7 @@
       self,
       nixpkgs,
       home-manager,
+      stylix,
       ...
     }:
     let
@@ -101,7 +103,14 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.${username} = import ./home.nix;
+              home-manager.users.${username} =
+                { pkgs, ... }:
+                {
+                  imports = [
+                    ./home.nix
+                    stylix.homeManagerModules.stylix
+                  ];
+                };
               home-manager.extraSpecialArgs = {
                 inherit username gitUser gitEmail;
               };
@@ -127,7 +136,14 @@
               {
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
-                home-manager.users.${username} = import ./home.nix;
+                home-manager.users.${username} =
+                  { pkgs, ... }:
+                  {
+                    imports = [
+                      ./home.nix
+                      stylix.homeManagerModules.stylix
+                    ];
+                  };
                 home-manager.extraSpecialArgs = {
                   inherit username gitUser gitEmail;
                 };
@@ -146,6 +162,7 @@
           inherit pkgs;
           modules = [
             ./home.nix
+            stylix.homeManagerModules.stylix
           ];
           extraSpecialArgs = {
             inherit username gitUser gitEmail;

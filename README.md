@@ -3,7 +3,11 @@
 hyprdots-nix is an experimental nixos configuration for 
 [hyprdots](https://github.com/prasanthrangan/hyprdots), a hyprland-based dotfiles setup.
 
-the goal is to have a fully reproducable home-manager module for hyprdots
+`hyprdots-hyde.nix` - for those who want the default hyprdots experience
+
+`hyprdots.nix` (experimental) - for those who want the "nixos way" of hyprdots
+
+note the [considerations](#considerations--module-installation) on the two different module implementations.
 
 installation is available as a nixos host and vm.
 
@@ -12,7 +16,7 @@ installation is available as a nixos host and vm.
 - nixos install
   - it may be possible to use nix the package manager on other operating systems. i haven't tried it.
   
-- git
+- git (`nix-shell -p git`)
 
 > note: both implementations will delete/replace existing configurations. ensure you backup your data if running on your own machine. at this stage, it's recommended to build the vm.
 
@@ -21,7 +25,7 @@ installation is available as a nixos host and vm.
 1. clone this repository:
 
    ```bash
-   git clone https://github.com/richard604/hyprdots-nix.git
+   git clone https://github.com/richen604/hyprdots-nix.git
    cd hyprdots-nix
    ```
 
@@ -35,6 +39,8 @@ installation is available as a nixos host and vm.
    ```bash
    sudo nixos-generate-config --show-hardware-config > ./hardware-configuration.nix
    ```
+
+before going further, please read the [considerations](#considerations--module-installation) below.
 
 4. build and switch to your new configuration:
 
@@ -65,29 +71,16 @@ installation is available as a nixos host and vm.
     - terminal will open and run the install process. select y for all and overwrite all configs. will automatically reboot.
     - this installs Catppuccin Mocha theme by default. feel free to run `themepatcher.sh "Theme Name" "Theme URL"` to add another.
   
-  > [!NOTE]
-  > - roti is a bit buggy, style 7 is recommended
-
+  > - rofi is a bit buggy, style 7 is recommended
 
 <br>
 
-- `modules/hyprdots-build.nix`: (**experimental**) home-manager module for the "nixos way" of hyprdots. this will fully deprecate the hyde-cli. and serve as a reproducable build method for hyprdots.
+- `modules/hyprdots/hyprdots.nix`: (**experimental**) home-manager module for the "nixos way" of hyprdots. 
 
   - make sure the module is enabled in `home.nix`:
     ```nix
-    modules.hyprdots-build = {
+    modules.hyprdots = {
       enable = true;
-      # theme defaults to catppuccin mocha
-      theme = "Catppuccin-Mocha";
-      # clean build will install all hyprdots configs by default
-      cleanBuild = true;
-      # or, you can specify which files to install. defaults to nothing
-      # fill path to files are in the hyprdots source directory
-      files = [
-        ".config/hypr"
-        ".config/kitty"
-        ".zshrc"
-      ];
     };
     ```
 
@@ -109,30 +102,14 @@ nix run . # or sudo nixos-rebuild switch --flake .#hyprdots-nix
 - [x] working system configuration
 - [x] working home manager setup
 - [x] vm setup for development
-- [x]  hyprdots-build module
+- [x] hyprdots-hyde module (completed)
+- [x]  hyprdots derivation
   - [x] symlink hyprdots configs & scripts using home.file
-  - [x] run themepatcher to install a theme (temporary)
-  - [ ] fully reproduce hyde-install functionality
-  - [ ] fully integrate theme management the nixos way
-  - [ ] home-manager conflicts 
-  - [ ] file arguments
-  - [ ] test & fix 
-    - [ ] waybar is known to break in the vm
-    - [ ] ohmyzsh & powerlevel10k fixes 
-    - [ ] roti fixes
-    - [ ] sddm
-- [x] hyprdots-hyde module
-  - [x] build hyde-cli from source
-  - [x] Hyde install link to hyprdots
-  - [x] theme patching 
-  - [x] hyprdots-first-boot script
-  - [ ] home-manager conflicts 
-  - [ ] file arguments
-  - [ ] test & fix 
-    - [ ] waybar is known to break in the vm
-    - [ ] ohmyzsh & powerlevel10k fixes 
-    - [ ] roti fixes
-    - [ ] sddm
+  - [x] unpack theme in build script
+  - [ ] gtk, qt, icon, cursor params
+  - [ ] rofi and waybar params
+  - [ ] home-manager theme switch script
+  - [ ] wallbash (future)
 - [ ] cleanup. remove all unneeded packages to produce the minimal hyprdots configuration
 
 ## troubleshooting & Issues
@@ -141,7 +118,7 @@ nix run . # or sudo nixos-rebuild switch --flake .#hyprdots-nix
   ```bash
   journalctl -b
   journalctl --user -b
-  systemctl --user status home-manager-<hostname>.service
+  sudo systemctl status home-manager-<hostname>.service
   ```
 - if running nixos on host, please run `nix-shell -p nix-info --run "nix-info -m"` and paste the result.
 
