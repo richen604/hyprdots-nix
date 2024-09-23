@@ -14,6 +14,7 @@ main() {
     # Parse JSON arguments
     args="$1"
     theme=$(echo "$args" | jq -r '.theme')
+    wallpapers=$(echo "$args" | jq -r '.wallpapers')
 
     echo "Configuring theme: $theme"
 
@@ -28,11 +29,15 @@ main() {
 
     echo "Copying source and theme..."
     cp -r ./hyprdots-source/Configs/. "$out"/hyprdots
-    cp -r ./hyprdots-theme/Configs/. "$out"/hyprdots
-    cp -r "./hyprdots-theme/Configs/.config/hyde/themes/${theme}/wallpapers/." "$out"/hyprdots/wallpapers
+
+    # Handle different wallpaper directory structures
+    if [ -d "$wallpapers/Configs/" ]; then
+        cp -r "$wallpapers/Configs/." "$out"/hyprdots/
+    else
+        cp -r "$wallpapers." "$out"/hyprdots/.config/hyde/themes/$theme/wallpapers
+    fi
 
     ls -aR "$out"/hyprdots/wallpapers
-
 
     rm -rf "$out"/hyprdots/.gtkrc-2.0
     rm -rf "$out"/hyprdots/.zshrc
@@ -58,11 +63,6 @@ main() {
     windowrulev2 = center,class:^(Rofi)$
     windowrulev2 = noborder,class:^(Rofi)$
     ' >> "$out"/hyprdots/.config/hypr/windowrules.conf
-
-    echo "Applying theme configuration..."
-    # Add actual theme configuration commands here
-
-    echo "Build process completed."
 }
 
 # Run main function and redirect output to log file

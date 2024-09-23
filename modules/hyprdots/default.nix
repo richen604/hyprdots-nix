@@ -9,7 +9,7 @@ with lib;
 
 let
   cfg = config.programs.hyprdots;
-  themes = import ./theme.nix { inherit pkgs lib; };
+  themes = import ./themes.nix { inherit pkgs lib; };
 
   hyprdotsDrv = pkgs.stdenv.mkDerivation {
     pname = "hyprdots";
@@ -18,21 +18,25 @@ let
       (pkgs.fetchFromGitHub {
         owner = "prasanthrangan";
         repo = "hyprdots";
-        rev = "main";
+        rev = "7881e8503857dbe702409d882cc709af8e9f720d";
         name = "hyprdots-source";
-        sha256 = "sha256-qIVty9nuuFsw6Kd2r42Yerzm/Cp4KbvjdJE9oYGZgXA=";
+        sha256 = "sha256-Xm8HM7+rU4u43X0sLholBk46XTm5kp+ooMLFyPX6GhA=";
       })
-      (themes.fetchTheme { theme = cfg.theme; })
     ];
 
     sourceRoot = ".";
     buildInputs = [ pkgs.jq ];
 
     buildPhase = ''
-      ${pkgs.bash}/bin/bash ${./build.sh} '${builtins.toJSON { inherit (cfg) theme; }}'
+      ${pkgs.bash}/bin/bash ${./build.sh} '${
+        builtins.toJSON {
+          inherit (cfg) theme;
+          wallpapers = themes.${cfg.theme}.wallpapers;
+        }
+      }'
     '';
 
-    #! useful debugging files
+    # #! useful debugging files
     # installPhase = ''
     #   false
     # '';
@@ -43,7 +47,7 @@ in
   options.programs.hyprdots = {
     enable = mkEnableOption "enable hyprdots";
     theme = mkOption {
-      type = types.enum themes.availableThemes;
+      type = types.enum (builtins.attrNames themes);
       default = "Catppuccin Mocha";
       description = "Theme for the dotfiles, fetches from hyde-gallery theme database";
     };
@@ -64,14 +68,17 @@ in
       gsettings-desktop-schemas
       libsForQt5.qtstyleplugins
       kdePackages.qtstyleplugin-kvantum
-      themes.themeData.${cfg.theme}.gtk.package
 
       # Fonts
       meslo-lgs-nf
 
       # Hyprdots
       hyprdotsDrv
+
+      # Add the icon theme package
+      themes.${cfg.theme}.iconTheme.package
     ];
+
     home.file = mkMerge [
 
       # Main hyprdots files from build, see build.sh for more details on the directory structure of hyprdots
@@ -120,11 +127,39 @@ in
       }
     ];
 
+    home.activation = {
+      runSwwwallcache = lib.hm.dag.entryAfter [ "copyWallpapers" ] ''
+        export PATH="${
+          lib.makeBinPath [
+            pkgs.gawk
+            pkgs.coreutils
+            pkgs.gnused
+            pkgs.gnutar
+            pkgs.gzip
+            pkgs.parallel
+            pkgs.bash
+            pkgs.imagemagick
+          ]
+        }:$PATH"
+        ${pkgs.bash}/bin/bash $HOME/.local/share/bin/swwwallcache.sh
+      '';
+    };
+
+    # GTK configuration
+    gtk = {
+      enable = true;
+      iconTheme = {
+        name = themes.${cfg.theme}.iconTheme.name;
+        package = themes.${cfg.theme}.iconTheme.package;
+      };
+    };
+
     stylix = {
+      # image is required, but this is overridden by hyprdots later
       image = config.lib.stylix.pixel "base0A";
       enable = true;
       polarity = "dark";
-      base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+      base16Scheme = themes.${cfg.theme}.base16;
     };
 
   };

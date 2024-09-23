@@ -4,6 +4,7 @@
   username,
   host,
   lib,
+  defaultPassword,
   ...
 }:
 {
@@ -143,6 +144,7 @@
       "networkmanager"
       "video"
     ];
+    initialPassword = defaultPassword;
   };
   users.defaultUserShell = pkgs.zsh;
 

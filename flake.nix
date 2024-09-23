@@ -36,132 +36,56 @@
         config.allowUnfree = true;
         config.allowUnfreePredicate = _: true;
       };
-
-      mkVM =
-        { nixosSystem, ... }:
-        nixosSystem.extendModules {
-          modules = [
-            (
-              { config, pkgs, ... }:
-              {
-                virtualisation.libvirtd.enable = true;
-                virtualisation.vmVariant = {
-                  virtualisation = {
-                    memorySize = 8192;
-                    cores = 4;
-                    diskSize = 20480;
-                    qemu = {
-                      options = [
-                        "-device virtio-vga-gl"
-                        "-display gtk,gl=on"
-                      ];
-                    };
-                  };
-                  services.xserver = {
-                    displayManager.autoLogin = {
-                      enable = true;
-                      user = username;
-                    };
-                    videoDrivers = [ "virtio" ];
-                  };
-
-                };
-                users.users.${username} = {
-                  initialPassword = defaultPassword;
-                };
-                environment.systemPackages = with pkgs; [
-                  open-vm-tools
-                  spice-vdagent
-                ];
-                services.qemuGuest.enable = true;
-                services.spice-vdagentd = {
-                  enable = true;
-                };
-              }
-            )
-          ];
-        };
+      mkHost = import ./host/default.nix;
+      mkVM = import ./host/mkVM.nix { inherit username; };
 
     in
     {
       nixosConfigurations = {
-        hyprdots-nix = nixpkgs.lib.nixosSystem {
-          inherit system pkgs;
+        hyprdots-nix = mkHost {
+          inherit
+            pkgs
+            nixpkgs
+            home-manager
+            stylix
+            username
+            gitUser
+            gitEmail
+            host
+            defaultPassword
+            system
+            ;
+        };
 
-          specialArgs = {
+        hyprdots-nix-vm = mkVM {
+          nixosSystem = mkHost {
             inherit
+              nixpkgs
+              pkgs
+              home-manager
+              stylix
               username
               gitUser
               gitEmail
               host
+              defaultPassword
+              system
               ;
-          };
-
-          modules = [
-            ./configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${username} =
-                { pkgs, ... }:
-                {
-                  imports = [
-                    ./home.nix
-                    stylix.homeManagerModules.stylix
-                  ];
-                };
-              home-manager.extraSpecialArgs = {
-                inherit username gitUser gitEmail;
-              };
-            }
-          ];
-        };
-
-        hyprdots-nix-vm = mkVM {
-          nixosSystem = nixpkgs.lib.nixosSystem {
-            inherit system pkgs;
-            specialArgs = {
-              inherit
-                username
-                gitUser
-                gitEmail
-                host
-                defaultPassword
-                ;
-            };
-            modules = [
-              ./configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.users.${username} =
-                  { pkgs, ... }:
-                  {
-                    imports = [
-                      ./home.nix
-                      stylix.homeManagerModules.stylix
-                    ];
-                  };
-                home-manager.extraSpecialArgs = {
-                  inherit username gitUser gitEmail;
-                };
-              }
-            ];
           };
         };
       };
+
       packages.${system} = {
         default = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
         hyprdots-nix-vm = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
+        hyprdots-nix = self.nixosConfigurations.hyprdots-nix.config.system.build.toplevel;
       };
 
       homeConfigurations = {
         ${username} = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [
-            ./home.nix
+            ./host/home.nix
             stylix.homeManagerModules.stylix
           ];
           extraSpecialArgs = {

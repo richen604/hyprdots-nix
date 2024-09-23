@@ -14,25 +14,25 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
-    ./modules/hyprdots/hyprdots.nix
-    ./modules/hyprdots-hyde.nix
+    ../modules/hyprdots
+    ../modules/hyprdots-hyde.nix
   ];
 
-  modules.hyprdots-hyde = {
-    enable = true;
-  };
-
-  # programs.hyprdots = {
+  # modules.hyprdots-hyde = {
   #   enable = true;
   # };
+
+  programs.hyprdots = {
+    enable = true;
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    extraConfig = ''
-      exec-once = kitty $HOME/hyprdots-first-boot.sh
-      exec-once = touch $HOME/.zshrc
-    '';
+    # extraConfig = ''
+    #   exec-once = kitty $HOME/hyprdots-first-boot.sh
+    #   exec-once = touch $HOME/.zshrc
+    # '';
   };
 
   # ===== Home Packages =====
@@ -61,7 +61,7 @@
     nwg-look
     dolphin
     libinput-gestures
-    (callPackage ./modules/pokemon-colorscripts.nix { })
+    (callPackage ../modules/pokemon-colorscripts.nix { })
   ];
 
   programs = {
