@@ -87,7 +87,7 @@ in
         nameValuePair "${name}" {
           source = "${hyprdotsDrv}/hyprdots/${name}";
           recursive = true;
-          force = true;
+          force = false;
         }
       ) (builtins.readDir "${hyprdotsDrv}/hyprdots"))
 
@@ -95,7 +95,7 @@ in
       {
         ".zshrc" = {
           source = ./dotfiles/.zshrc;
-          force = true;
+          force = false;
         };
       }
 
@@ -105,7 +105,7 @@ in
         nameValuePair name {
           source = path;
           recursive = true;
-          force = true;
+          force = false;
         }
       ) cfg.fileOverrides)
 
@@ -122,7 +122,7 @@ in
         # Lists the build command and arguments
         "hyprdots_build.txt" = {
           source = "${hyprdotsDrv}/hyprdots/hyprdots_build.txt";
-          force = true;
+          force = false;
         };
       }
     ];
@@ -160,6 +160,10 @@ in
       enable = true;
       polarity = "dark";
       base16Scheme = themes.${cfg.theme}.base16;
+      cursor = {
+        package = themes.${cfg.theme}.cursor.package or pkgs.bibata-cursors;
+        name = themes.${cfg.theme}.cursor.name or "Bibata-Modern-Ice";
+      };
     };
 
   };

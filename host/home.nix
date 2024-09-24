@@ -24,6 +24,7 @@
 
   programs.hyprdots = {
     enable = true;
+    theme = "Tokyo Night";
   };
 
   wayland.windowManager.hyprland = {
