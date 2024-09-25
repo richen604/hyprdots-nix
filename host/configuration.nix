@@ -303,6 +303,16 @@
     wl-clipboard
     grim
     grimblast
+    lm_sensors
+
+    # idk waybar needs this
+    playerctl
+    gobject-introspection
+    (python3.withPackages (
+      ps: with ps; [
+        pygobject3
+      ]
+    ))
   ];
 
   # ===== Program Configurations =====
@@ -312,22 +322,7 @@
       enable = true;
       enableSSHSupport = true;
     };
-    zsh = {
-      enable = true;
-      enableCompletion = true;
-      autosuggestions.enable = true;
-      syntaxHighlighting.enable = true;
-      ohMyZsh = {
-        enable = true;
-        plugins = [
-          "git"
-          "history"
-          "sudo"
-        ];
-      };
-      promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-    };
-
+    zsh.enable = true;
   };
 
   # ===== Font Configuration =====

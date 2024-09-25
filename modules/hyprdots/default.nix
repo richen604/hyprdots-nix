@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.programs.hyprdots;
+
   themes = import ./themes.nix { inherit pkgs lib; };
 
   hyprdotsDrv = pkgs.stdenv.mkDerivation {
@@ -44,6 +45,9 @@ let
   };
 in
 {
+  imports = [
+    ./modules/hypr
+  ];
   options.programs.hyprdots = {
     enable = mkEnableOption "enable hyprdots";
     theme = mkOption {
@@ -58,6 +62,7 @@ in
     };
   };
   config = mkIf cfg.enable {
+
     home.packages = with pkgs; [
       # Zsh
       zsh-powerlevel10k
@@ -82,22 +87,110 @@ in
     home.file = mkMerge [
 
       # Main hyprdots files from build, see build.sh for more details on the directory structure of hyprdots
-      (mapAttrs' (
-        name: _:
-        nameValuePair "${name}" {
-          source = "${hyprdotsDrv}/hyprdots/${name}";
-          recursive = true;
-          force = false;
-        }
-      ) (builtins.readDir "${hyprdotsDrv}/hyprdots"))
+      # TODO: port entire hyprdots config to nix, below listed by priority
+      # .gtkrc-2.0
+      # .p10k.zsh
+      # - .config/
+      #   - fish
+      #   - kitty
+      #   - hyde
+      #   - hypr
+      #   - rofi
+      #   - dunst
+      #   - waybar
+      #   - swaylock
 
-      # overrides for hyprdots files
+      #   - Code-OSS/User
+      #   - Code/User
+
+      #   - fastfetch
+
+      #   - lsd
+      #   - menus
+
+      #   - wlogout
+      #   - xsettingsd
+      #   - baloofilerc
+      #   - dolphinrc
+
+      #   - libinput-gestures.conf
+      #   - low priority
+      #     - MangoHud
+
+      # handled by stylix OR not required
+      #   - Kvantum
+      #   - kdeglobals
+      #   - gtk-3.0
+      #   - nwg-look
+      #   - qt5ct
+      #   - qt6ct
+      #   - spotify-flags.conf
+
       {
-        ".zshrc" = {
-          source = ./dotfiles/.zshrc;
-          force = false;
+        ".config/hyde" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/hyde";
+          recursive = true;
         };
       }
+
+      {
+        ".config/hypr/themes" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/hypr/themes";
+          recursive = true;
+        };
+      }
+
+      {
+        ".local/share/bin" = {
+          source = ./modules/scripts;
+          recursive = true;
+          force = true;
+        };
+      }
+
+      {
+        ".config/rofi" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/rofi";
+          recursive = true;
+        };
+      }
+
+      {
+        ".config/waybar" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/waybar";
+          recursive = true;
+        };
+      }
+
+      {
+        ".config/swaylock" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/swaylock";
+          recursive = true;
+        };
+      }
+
+      {
+        ".p10k.zsh" = {
+          source = "${hyprdotsDrv}/hyprdots/.p10k.zsh";
+          force = true;
+        };
+      }
+
+      {
+        ".config/dunst" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/dunst";
+          recursive = true;
+        };
+      }
+
+      # (mapAttrs' (
+      #   name: _:
+      #   nameValuePair "${name}" {
+      #     source = "${hyprdotsDrv}/hyprdots/${name}";
+      #     recursive = true;
+      #     force = false;
+      #   }
+      # ) (builtins.readDir "${hyprdotsDrv}/hyprdots"))
 
       # User specified file overrides
       (mapAttrs' (
@@ -105,7 +198,7 @@ in
         nameValuePair name {
           source = path;
           recursive = true;
-          force = false;
+          force = true;
         }
       ) cfg.fileOverrides)
 
@@ -128,7 +221,7 @@ in
     ];
 
     home.activation = {
-      runSwwwallcache = lib.hm.dag.entryAfter [ "copyWallpapers" ] ''
+      runSwwwallcache = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         export PATH="${
           lib.makeBinPath [
             pkgs.gawk
@@ -154,12 +247,51 @@ in
       };
     };
 
-    stylix = {
-      # image is required, but this is overridden by hyprdots later
-      image = config.lib.stylix.pixel "base0A";
+    programs.kitty = {
       enable = true;
-      polarity = "dark";
-      base16Scheme = themes.${cfg.theme}.base16;
+    };
+
+    programs.zsh = {
+      enable = true;
+      enableCompletion = true;
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
+      oh-my-zsh = {
+        enable = true;
+        plugins = [
+          "git"
+          "history"
+          "sudo"
+        ];
+      };
+      initExtra = ''
+        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+        source ~/.p10k.zsh
+      '';
+      initExtraFirst = ''
+        #Display Pokemon
+        pokemon-colorscripts --no-title -r 1-3
+        # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+        # Initialization code that may require console input (password prompts, [y/n]
+        # confirmations, etc.) must go above this block; everything else may go below.
+        if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+          source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+        fi
+      '';
+    };
+    home.sessionVariables = {
+      XDG_DATA_DIRS = "$XDG_DATA_DIRS:${pkgs.zsh}/share";
+    };
+
+    stylix = {
+      # image is required, this is the primary color for base16 themes
+      # TODO: create override
+      image = config.lib.stylix.pixel "base00";
+      enable = true;
+      polarity = themes.${cfg.theme}.polarity;
+      base16Scheme = builtins.trace "base16 scheme for theme ${cfg.theme}: ${
+        builtins.toJSON themes.${cfg.theme}.base16
+      }" themes.${cfg.theme}.base16;
       cursor = {
         package = themes.${cfg.theme}.cursor.package or pkgs.bibata-cursors;
         name = themes.${cfg.theme}.cursor.name or "Bibata-Modern-Ice";
