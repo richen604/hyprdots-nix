@@ -304,6 +304,7 @@
     grim
     grimblast
     lm_sensors
+    pciutils
 
     # idk waybar needs this
     playerctl

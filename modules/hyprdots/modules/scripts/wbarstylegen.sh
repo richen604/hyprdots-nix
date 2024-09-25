@@ -115,5 +115,5 @@ hypr_border=$(awk -F '=' '{if($1~" rounding ") print $2}' "$src_file" | sed 's/ 
 [ "$hypr_border" == "0" ] && sed -i "/border-radius: /c\    border-radius: 0px;" "$out_file"
 
 # Copy generated style to the actual waybar directory (if not on NixOS)
-[ ! -f /etc/nixos ] && cp "$out_file" "$waybar_dir/style.css"
+[ -z "$NIX_PATH" ] && cp "$out_file" "$waybar_dir/style.css"
 

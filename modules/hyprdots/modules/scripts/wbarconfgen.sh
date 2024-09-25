@@ -128,9 +128,11 @@ cat "$modules_dir/footer.jsonc" >> "$conf_file"
 "$scrDir/wbarstylegen.sh" "$temp_dir"
 
 # Copy generated files to the actual waybar directory (if not on NixOS)
-if [ ! -f /etc/nixos ]; then
+if [ -z "$NIX_PATH" ]; then
     cp "$conf_file" "$waybar_dir/config.jsonc"
     cp "$temp_dir/style.css" "$waybar_dir/style.css"
+else
+    echo "Running on NixOS, skipping file copy"
 fi
 
 # Restart waybar
