@@ -1,26 +1,4 @@
 {
-  # █▀▀ █░█ █▀█ █▀ █▀█ █▀█
-  # █▄▄ █▄█ █▀▄ ▄█ █▄█ █▀▄
-  exec = [
-    "hyprctl setcursor Bibata-Modern-Ice 20"
-    "gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Ice'"
-    "gsettings set org.gnome.desktop.interface cursor-size 20"
-
-    # █▀▀ █▀█ █▄░█ ▀█▀
-    # █▀░ █▄█ █░▀█ ░█░
-    "gsettings set org.gnome.desktop.interface font-name 'Cantarell 10'"
-    "gsettings set org.gnome.desktop.interface document-font-name 'Cantarell 10'"
-    "gsettings set org.gnome.desktop.interface monospace-font-name 'CaskaydiaCove Nerd Font Mono 9'"
-    "gsettings set org.gnome.desktop.interface font-antialiasing 'rgba'"
-    "gsettings set org.gnome.desktop.interface font-hinting 'full'"
-
-    # █▀ █▀█ █▀▀ █▀▀ █ ▄▀█ █░░
-    # ▄█ █▀▀ ██▄ █▄▄ █ █▀█ █▄▄
-    "gsettings set org.gnome.desktop.interface icon-theme 'Tela-circle-dracula'"
-    "gsettings set org.gnome.desktop.interface gtk-theme 'Catppuccin-Mocha'"
-    "gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'"
-  ];
-
   decoration = {
     dim_special = 0.3;
   };
@@ -46,4 +24,9 @@
       xray = false;
     };
   };
+
+  # TODO: full nixify themes: some themes don't require waybar blur. allow extending
+  layerrule = [
+    "blur,waybar"
+  ];
 }

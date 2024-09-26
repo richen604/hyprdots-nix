@@ -1,7 +1,5 @@
 {
-  config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -122,10 +120,10 @@ in
       # █▀ █▀█ █░█ █▀█ █▀▀ █▀▀
       # ▄█ █▄█ █▄█ █▀▄ █▄▄ ██▄
 
-      themes
       animations
       keybindings
       windowrules
+      themes
       # # Note: as userprefs.conf is sourced at the end, settings configured in this file will override the defaults
       userprefs
     ];

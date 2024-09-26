@@ -55,6 +55,20 @@ in
       default = "Catppuccin Mocha";
       description = "Theme for the dotfiles, fetches from hyde-gallery theme database";
     };
+
+    git = {
+      userName = mkOption {
+        type = types.str;
+        default = "";
+        description = "Git user name";
+      };
+      userEmail = mkOption {
+        type = types.str;
+        default = "";
+        description = "Git user email";
+      };
+    };
+
     fileOverrides = mkOption {
       type = types.attrsOf types.path;
       default = { };
@@ -64,13 +78,21 @@ in
   config = mkIf cfg.enable {
 
     home.packages = with pkgs; [
+
+      # XDG Desktop Portal
+      xdg-desktop-portal
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-hyprland
+
       # Zsh
       zsh-powerlevel10k
 
       # GTK Themeing
       gtk3
       gtk4
-      gsettings-desktop-schemas
+      # gsettings-desktop-schemas
+      gnome-settings-daemon
+      glib
       libsForQt5.qtstyleplugins
       kdePackages.qtstyleplugin-kvantum
 
@@ -82,6 +104,32 @@ in
 
       # Add the icon theme package
       themes.${cfg.theme}.iconTheme.package
+
+      # Hyprdots dependencies
+      dconf
+      git
+      gum
+      coreutils
+      findutils
+      wget
+      unzip
+      jq
+      kitty
+      dunst
+      lsd
+      mangohud
+      hyprland
+      fastfetch
+      qt5ct
+      qt6ct
+      waybar
+      wlogout
+      nwg-look
+      dolphin
+      libinput-gestures
+      (callPackage ../pokemon-colorscripts.nix { })
+      swaylock
+      rofi-wayland-unwrapped
     ];
 
     home.file = mkMerge [
@@ -95,7 +143,7 @@ in
       #   - fish
       #   - kitty
       #   - hyde
-      #   - hypr
+
       #   - rofi
       #   - dunst
       #   - waybar
@@ -127,9 +175,55 @@ in
       #   - qt6ct
       #   - spotify-flags.conf
 
+      # done
+
+      #   - hypr
+
       {
         ".config/hyde" = {
           source = "${hyprdotsDrv}/hyprdots/.config/hyde";
+          recursive = true;
+        };
+      }
+
+      {
+        ".themes" = {
+          source = "${hyprdotsDrv}/hyprdots/.themes";
+          recursive = true;
+        };
+      }
+
+      {
+        ".config/qt5ct" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/qt5ct";
+          recursive = true;
+        };
+      }
+
+      {
+        ".config/qt6ct" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/qt6ct";
+          recursive = true;
+        };
+      }
+
+      {
+        ".config/Kvantum" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/Kvantum";
+          recursive = true;
+        };
+      }
+
+      {
+        ".config/cava" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/cava";
+          recursive = true;
+        };
+      }
+
+      {
+        ".config/fish" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/fish";
           recursive = true;
         };
       }
@@ -156,12 +250,13 @@ in
         };
       }
 
-      {
-        ".config/swaylock" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/swaylock";
-          recursive = true;
-        };
-      }
+      # {
+      #   ".config/swaylock" = {
+      #     source = "${hyprdotsDrv}/hyprdots/.config/swaylock";
+      #     recursive = true;
+      #     force = true;
+      #   };
+      # }
 
       {
         ".p10k.zsh" = {
@@ -176,6 +271,20 @@ in
           recursive = true;
         };
       }
+
+      {
+        ".config/dolphinrc" = {
+          source = "${hyprdotsDrv}/hyprdots/.config/dolphinrc";
+          recursive = true;
+        };
+      }
+
+      # {
+      #   ".config/kitty" = {
+      #     source = "${hyprdotsDrv}/hyprdots/.config/kitty";
+      #     recursive = true;
+      #   };
+      # }
 
       # (mapAttrs' (
       #   name: _:
@@ -241,54 +350,90 @@ in
       };
     };
 
-    programs.kitty = {
-      enable = true;
+    fonts = {
+      fontconfig = {
+        enable = true;
+        defaultFonts = {
+          # sansSerif = themes.${cfg.theme}.font.sansSerif.name;
+          # monospace = themes.${cfg.theme}.font.monospace.name;
+        };
+      };
     };
 
-    programs.zsh = {
+    # Qt
+    qt = {
       enable = true;
-      enableCompletion = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
-      oh-my-zsh = {
-        enable = true;
-        plugins = [
-          "git"
-          "history"
-          "sudo"
-        ];
-      };
-      initExtra = ''
-        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-        source ~/.p10k.zsh
-      '';
-      initExtraFirst = ''
-        #Display Pokemon
-        pokemon-colorscripts --no-title -r 1-3
-        # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-        # Initialization code that may require console input (password prompts, [y/n]
-        # confirmations, etc.) must go above this block; everything else may go below.
-        if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-          source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-        fi
-      '';
+      platformTheme.name = "gtk";
     };
+
+    programs = {
+      home-manager.enable = true;
+      git = {
+        enable = true;
+        userName = "${cfg.git.userName}";
+        userEmail = "${cfg.git.userEmail}";
+      };
+      kitty.enable = true;
+      rofi = {
+        enable = true;
+        package = pkgs.rofi-wayland-unwrapped;
+      };
+      waybar.enable = true;
+      vscode.enable = true;
+      neovim = {
+        enable = true;
+        defaultEditor = true;
+      };
+      swaylock = {
+        enable = true;
+      };
+      zsh = {
+        enable = true;
+        enableCompletion = true;
+        autosuggestion.enable = true;
+        syntaxHighlighting.enable = true;
+        oh-my-zsh = {
+          enable = true;
+          plugins = [
+            "git"
+            "history"
+            "sudo"
+          ];
+        };
+        initExtra = ''
+          source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+          source ~/.p10k.zsh
+        '';
+        initExtraFirst = ''
+          #Display Pokemon
+          pokemon-colorscripts --no-title -r 1-3
+          # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+          # Initialization code that may require console input (password prompts, [y/n]
+          # confirmations, etc.) must go above this block; everything else may go below.
+          if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+            source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+          fi
+        '';
+      };
+    };
+
     home.sessionVariables = {
       XDG_DATA_DIRS = "$XDG_DATA_DIRS:${pkgs.zsh}/share";
     };
 
     stylix = {
-      # image is required, this is the primary color for base16 themes
+      # image is required, this is the primary color that generates base16 themes
       # TODO: create override
       image = config.lib.stylix.pixel "base00";
       enable = true;
       polarity = themes.${cfg.theme}.polarity;
-      base16Scheme = builtins.trace "base16 scheme for theme ${cfg.theme}: ${
-        builtins.toJSON themes.${cfg.theme}.base16
-      }" themes.${cfg.theme}.base16;
+      base16Scheme = themes.${cfg.theme}.base16;
       cursor = {
         package = themes.${cfg.theme}.cursor.package or pkgs.bibata-cursors;
         name = themes.${cfg.theme}.cursor.name or "Bibata-Modern-Ice";
+      };
+      targets = {
+        neovim.transparentBackground.main = true;
       };
     };
 

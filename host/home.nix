@@ -24,59 +24,11 @@
 
   programs.hyprdots = {
     enable = true;
-  };
-
-  # ===== Home Packages =====
-  home.packages = with pkgs; [
-    # Hyprdots dependencies
-    dconf
-    git
-    gum
-    coreutils
-    findutils
-    wget
-    unzip
-    jq
-    kitty
-    dunst
-    lsd
-    mangohud
-    hyprland
-    fastfetch
-    qt5ct
-    qt6ct
-    rofi-wayland
-    swaylock
-    waybar
-    wlogout
-    nwg-look
-    dolphin
-    libinput-gestures
-    (callPackage ../modules/pokemon-colorscripts.nix { })
-  ];
-
-  programs = {
-    home-manager.enable = true;
     git = {
-      enable = true;
       userName = "${gitUser}";
       userEmail = "${gitEmail}";
     };
-    waybar = {
-      enable = true;
-    };
-    neovim = {
-      enable = true;
-      defaultEditor = true;
-    };
-  };
-
-  fonts.fontconfig.enable = true;
-  xdg = {
-    userDirs = {
-      enable = true;
-      createDirectories = true;
-    };
+    theme = "Tokyo Night";
   };
 
   home.stateVersion = "24.11";

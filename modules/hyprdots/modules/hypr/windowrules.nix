@@ -90,7 +90,6 @@
 
   layerrule = [
     "blur,rofi"
-    "blur,waybar"
     "ignorezero,rofi"
     "blur,notifications"
     "ignorezero,notifications"

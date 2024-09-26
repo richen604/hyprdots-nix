@@ -29,9 +29,24 @@
       name = "wallpapers";
       rev = "d2052a18ed6e1f9e6d70c3431d27bf94f42be628";
       sha256 = "sha256-99wmu1R/Q9tuithyYBlxlEvkixY4Ea6S/Pgdimdqhj4=";
-      sparseCheckout = [
-        "Configs/.config/hyde/themes/Catppuccin Mocha/wallpapers"
-      ];
+    };
+    font = {
+      sansSerif = {
+        name = "Cantarell";
+        size = 10;
+      };
+      monospace = {
+        name = "CaskaydiaCove Nerd Font Mono";
+        size = 9;
+      };
+    };
+    cursor = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Ice";
+      size = 20;
+    };
+    misc = {
+      waybarBlur = true;
     };
   };
   "Catppuccin Latte" = {
@@ -48,10 +63,7 @@
       repo = "hyde-themes";
       name = "wallpapers";
       rev = "2b526598b76ae613d1de42fd3b089ba919ea6aec";
-      sha256 = lib.fakeSha256;
-      sparseCheckout = [
-        "Configs/.config/hyde/themes/Catppuccin Latte/wallpapers"
-      ];
+      sha256 = "sha256-kjHjcNcktEKLusIey/L4rbychUiib/suxGStq4zg7Pw=";
     };
   };
   "Decay Green" = {
@@ -71,9 +83,6 @@
       name = "wallpapers";
       rev = "1287bb71b1519c8fdab2bba642a7b24ec8364b6c";
       sha256 = lib.fakeSha256;
-      sparseCheckout = [
-        "Configs/.config/hyde/themes/Decay Green/wallpapers"
-      ];
     };
     # TODO: Edge Runner
     # TODO: Frosted Glass
@@ -85,7 +94,7 @@
     base16 = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-medium.yaml";
     iconTheme = {
       package = pkgs.gruvbox-dark-icons-gtk;
-      name = "Gruvbox-plus";
+      name = "gruvbox-dark-icons-gtk";
     };
     polarity = "dark";
     wallpapers = pkgs.fetchFromGitHub {
@@ -93,10 +102,7 @@
       repo = "hyde-themes";
       name = "wallpapers";
       rev = "11e0face8c74526fca5519f47cbe90458eef6cd1";
-      sha256 = lib.fakeSha256;
-      sparseCheckout = [
-        "Configs/.config/hyde/themes/Gruvbox Retro/wallpapers"
-      ];
+      sha256 = "sha256-p8eGJGj7JzuOmE+7TAlC3wu1HYC/aBCobptGC1oMzbo=";
     };
     # TODO: figure out what cursor this is, or build it as a derivation from
     # https://github.com/prasanthrangan/hyde-themes/tree/Gruvbox-Retro/Source
@@ -120,9 +126,6 @@
       name = "wallpapers";
       rev = "76077f39ed496a4b84d38473b0419343734c323e";
       sha256 = lib.fakeSha256;
-      sparseCheckout = [
-        "Configs/.config/hyde/themes/Material Sakura/wallpapers"
-      ];
     };
   };
   "Nordic Blue" = {
@@ -138,9 +141,6 @@
       name = "wallpapers";
       rev = "ce70a3524c7ff538ee4544088cc4b1b3091bd739";
       sha256 = lib.fakeSha256;
-      sparseCheckout = [
-        "Configs/.config/hyde/themes/Nordic Blue/wallpapers"
-      ];
     };
   };
   "Tokyo Night" = {
@@ -158,9 +158,6 @@
       name = "wallpapers";
       rev = "da8c38b7a6927eb585203e28fb8e403203578fe5";
       sha256 = "sha256-efWUxVYAH/eEue8G3x3beeT+yhNhLJ9yBkVsKiugiQ0=";
-      sparseCheckout = [
-        "Configs/.config/hyde/themes/Tokyo Night/wallpapers"
-      ];
     };
   };
 }

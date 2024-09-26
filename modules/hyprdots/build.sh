@@ -33,10 +33,10 @@ main() {
     # Handle different wallpaper directory structures
     if [ -d "$wallpapers/Configs/" ]; then
         mkdir -p "$out"/hyprdots/.config/hyde/themes/"$theme"/
-        cp -r "$wallpapers/Configs/.config/hyde/themes/$theme/wallpapers" "$out"/hyprdots/.config/hyde/themes/"$theme"/
+        cp -r "$wallpapers/Configs/.config/hyde/themes/$theme/." "$out"/hyprdots/.config/hyde/themes/"$theme"/
     else
         mkdir -p "$out"/hyprdots/.config/hyde/themes/"$theme"/
-        cp -r "$wallpapers" "$out"/hyprdots/.config/hyde/themes/"$theme"/wallpapers
+        cp -r "$wallpapers" "$out"/hyprdots/.config/hyde/themes/"$theme"/
     fi
 
     ls -aR "$out"/hyprdots/.config/hyde/themes/"$theme"/wallpapers

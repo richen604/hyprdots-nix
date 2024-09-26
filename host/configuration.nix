@@ -109,6 +109,7 @@
       };
       sessionPackages = [ pkgs.hyprland ];
     };
+    gnome.gnome-settings-daemon.enable = true;
   };
 
   networking = {
@@ -278,7 +279,6 @@
     kdePackages.qtstyleplugin-kvantum
     kdePackages.qt6ct
     kdePackages.wayland
-    rofi-wayland
     nwg-look
     ark
     dolphin
@@ -325,6 +325,7 @@
     };
     zsh.enable = true;
   };
+  programs.dconf.enable = true;
 
   # ===== Font Configuration =====
   fonts = {
