@@ -10,7 +10,7 @@ modules_dir="$waybar_dir/modules"
 conf_ctl="$waybar_dir/config.ctl"
 
 # Create a named temporary directory
-temp_dir="/tmp/waybar_temp"
+temp_dir="/var/tmp/waybar_temp"
 mkdir -p "$temp_dir"
 
 # Check if temporary files exist, if not, initialize them

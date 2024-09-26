@@ -33,7 +33,7 @@ in
           "dbus-update-activation-environment --systemd --all" # for XDPH
           "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP" # for XDPH
           "$HOME/.local/share/bin/polkitkdeauth.sh" # authentication dialogue for GUI apps
-          "waybar" # launch the system bar
+          "if [ -d /var/tmp/waybar_temp ]; then waybar --config /var/tmp/waybar_temp/config.jsonc --style /var/tmp/waybar_temp/style.css; else waybar; fi" # launch the system bar
           "blueman-applet" # systray app for Bluetooth
           "udiskie --no-automount --smart-tray" # front-end that allows to manage removable media
           "nm-applet --indicator" # systray app for Network/Wifi

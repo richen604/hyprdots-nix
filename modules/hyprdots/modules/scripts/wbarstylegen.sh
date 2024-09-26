@@ -12,7 +12,7 @@ in_file="$waybar_dir/modules/style.css"
 src_file="${confDir}/hypr/themes/theme.conf"
 
 # Use the named temporary directory
-temp_dir="/tmp/waybar_temp"
+temp_dir="/var/tmp/waybar_temp"
 mkdir -p "$temp_dir"
 
 # Set output file in temp directory
@@ -26,7 +26,7 @@ fi
 
 conf_ctl="$temp_dir/config.ctl"
 
-# Calculate height from control file or monitor resolution
+# Calculate height from control file or monitor resolution2
 b_height=$(grep '^1|' "$conf_ctl" | cut -d '|' -f 2)
 
 if [ -z "$b_height" ] || [ "$b_height" == "0" ]; then
