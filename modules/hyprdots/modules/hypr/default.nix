@@ -9,6 +9,7 @@ let
   keybindings = import ./keybindings.nix { inherit lib; };
   windowrules = import ./windowrules.nix;
   userprefs = import ./userprefs.nix;
+  themes = import ./themes.nix;
 in
 {
   wayland.windowManager.hyprland = {
@@ -121,10 +122,11 @@ in
       # █▀ █▀█ █░█ █▀█ █▀▀ █▀▀
       # ▄█ █▄█ █▄█ █▀▄ █▄▄ ██▄
 
+      themes
       animations
       keybindings
       windowrules
-      # Note: as userprefs.conf is sourced at the end, settings configured in this file will override the defaults
+      # # Note: as userprefs.conf is sourced at the end, settings configured in this file will override the defaults
       userprefs
     ];
   };

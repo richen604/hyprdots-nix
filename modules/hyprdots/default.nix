@@ -90,6 +90,7 @@ in
       # TODO: port entire hyprdots config to nix, below listed by priority
       # .gtkrc-2.0
       # .p10k.zsh
+      #   - Kvantum
       # - .config/
       #   - fish
       #   - kitty
@@ -118,7 +119,7 @@ in
       #     - MangoHud
 
       # handled by stylix OR not required
-      #   - Kvantum
+
       #   - kdeglobals
       #   - gtk-3.0
       #   - nwg-look
@@ -129,13 +130,6 @@ in
       {
         ".config/hyde" = {
           source = "${hyprdotsDrv}/hyprdots/.config/hyde";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/hypr/themes" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/hypr/themes";
           recursive = true;
         };
       }

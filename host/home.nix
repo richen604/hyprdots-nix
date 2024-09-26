@@ -26,15 +26,6 @@
     enable = true;
   };
 
-  wayland.windowManager.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-    # extraConfig = ''
-    #   exec-once = kitty $HOME/hyprdots-first-boot.sh
-    #   exec-once = touch $HOME/.zshrc
-    # '';
-  };
-
   # ===== Home Packages =====
   home.packages = with pkgs; [
     # Hyprdots dependencies
