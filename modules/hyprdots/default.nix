@@ -68,116 +68,156 @@ in
         description = "Git user email";
       };
     };
-
-    fileOverrides = mkOption {
-      type = types.attrsOf types.path;
-      default = { };
-      description = "Attribute set of files to override, e.g. { '.zshrc' = ./path/to/custom/zshrc; }";
-    };
   };
   config = mkIf cfg.enable {
 
     home.packages = with pkgs; [
 
-      # XDG Desktop Portal
-      xdg-desktop-portal
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-hyprland
+      # --------------------------------------------------- // System
+      pipewire # audio/video server
+      wireplumber # pipewire session manager
+      pavucontrol # pulseaudio volume control
+      pamixer # pulseaudio cli mixer
+      networkmanager # network manager
+      networkmanagerapplet # network manager system tray utility
+      bluez # bluetooth protocol stack
+      bluez-tools # bluetooth utility cli
+      blueman # bluetooth manager gui
+      brightnessctl # screen brightness control
+      udiskie # manage removable media
+      swayidle # sway idle management
+      playerctl # media player cli
+      gobject-introspection # for python packages
+      (python3.withPackages (
+        ps: with ps; [
+          pygobject3
+        ]
+      ))
+      trash-cli # cli to manage trash files
+      libinput-gestures # actions touchpad gestures using libinput
+      gnomeExtensions.window-gestures # gui for libinput-gestures
+      lm_sensors # system sensors
+      pciutils # pci utils
 
-      # Zsh
-      zsh-powerlevel10k
+      # --------------------------------------------------- // Display Manager
+      kdePackages.sddm # display manager for KDE plasma
+      libsForQt5.qt5.qtquickcontrols # for sddm theme ui elements
+      libsForQt5.qt5.qtquickcontrols2 # for sddm theme ui elements
+      libsForQt5.qt5.qtgraphicaleffects # for sddm theme effects
+      kdePackages.qtsvg # for sddm theme svg icons
+      libsForQt5.qt5.qtwayland # wayland support for qt5
+      qt6.qtwayland # wayland support for qt6
+      qtcreator # qt ide
+      qt6.qmake # qt6 build system
+
+      # --------------------------------------------------- // Window Manager
+      hyprland # wlroots-based wayland compositor
+      dunst # notification daemon
+      rofi-wayland-unwrapped # application launcher
+      waybar # system bar
+      swww # wallpaper
+      swaylock # lock screen
+      swaylock-fancy # lock screen
+      wlogout # logout menu
+      grimblast # screenshot tool
+      hyprpicker # color picker
+      slurp # region select for screenshot/screenshare
+      swappy # screenshot editor
+      cliphist # clipboard manager
+
+      # --------------------------------------------------- // Dependencies
+      polkit_gnome # authentication agent
+      xdg-desktop-portal-hyprland # xdg desktop portal for hyprland
+      # TODO: build python-pyamdgpuinfo from https://github.com/mark9064/pyamdgpuinfo
+      # python-pyamdgpuinfo # for amd gpu info
+      parallel # for parallel processing
+      jq # for json processing
+      imagemagick # for image processing
+      kdePackages.qtimageformats # for dolphin image thumbnails
+      kdePackages.ffmpegthumbs # for dolphin video thumbnails
+      kdePackages.kde-cli-tools # for dolphin file type defaults
+      libnotify # for notifications
+      kdePackages.wayland # for wayland support
+      xdg-desktop-portal-gtk # xdg desktop portal using gtk
+      emote # emoji picker gtk3
+      flatpak # package manager for flathub
+      envsubst # for environment variables
+      killall # for killing processes
+      wl-clipboard # clipboard for wayland
+
+      # --------------------------------------------------- // Theming
+
+      nwg-look # gtk configuration tool
+      libsForQt5.qt5ct # qt5 configuration tool
+      kdePackages.qt6ct # qt6 configuration tool
+      libsForQt5.qtstyleplugin-kvantum # svg based qt6 theme engine
+      kdePackages.qtstyleplugin-kvantum # svg based qt5 theme engine
+
+      # --------------------------------------------------- // Applications
+
+      firefox # browser
+      kitty # terminal
+      dolphin # kde file manager
+      ark # kde file archiver
+      vim # terminal text editor
+      vscode # ide text editor
+      # neovim # vim based text editor
+      code-cursor # ai vscode text editor
+
+      # --------------------------------------------------- // Shell
+
+      eza # file lister for zsh
+      oh-my-zsh # plugin manager for zsh
+      zsh-powerlevel10k # theme for zsh
+      starship # customizable shell prompt
+      fastfetch # system information fetch tool
+      (callPackage ../pokemon-colorscripts.nix { }) # display pokemon sprites
+      git # distributed version control system
+      fzf # command line fuzzy finder
+
+      # --------------------------------------------------- // Gaming
+      steam # gaming platform
+      gamemode # daemon and library for game optimisations
+      mangohud # system performance overlay
+      gamescope # micro-compositor for gaming
+      lutris # gaming platform
+
+      # --------------------------------------------------- // Music
+      cava # audio visualizer
+      spotify # proprietary music streaming service
+      spicetify-cli # cli to customize spotify client
+
+      # --------------------------------------------------- // HyDE
+      # hyde-cli-git # cli tool to manage hyde # TODO: future: build hydecli with script changes?
+
+      #! others
 
       # GTK Themeing
-      gtk3
-      gtk4
+      # gtk3
+      # gtk4
       # gsettings-desktop-schemas
-      gnome-settings-daemon
-      glib
-      libsForQt5.qtstyleplugins
-      kdePackages.qtstyleplugin-kvantum
+      # gnome-settings-daemon
+      # glib
+      # libsForQt5.qtstyleplugins
+      # kdePackages.qtstyleplugin-kvantum
 
       # Fonts
-      meslo-lgs-nf
+      # meslo-lgs-nf
 
       # Hyprdots
       hyprdotsDrv
 
       # Add the icon theme package
-      themes.${cfg.theme}.iconTheme.package
 
-      # Hyprdots dependencies
-      dconf
-      git
-      gum
-      coreutils
-      findutils
-      wget
-      unzip
-      jq
-      kitty
-      dunst
-      lsd
-      mangohud
-      hyprland
-      fastfetch
-      qt5ct
-      qt6ct
-      waybar
-      wlogout
-      nwg-look
-      dolphin
-      libinput-gestures
-      (callPackage ../pokemon-colorscripts.nix { })
-      swaylock
-      rofi-wayland-unwrapped
+      # coreutils
+      # findutils
+
     ];
 
     home.file = mkMerge [
 
       # Main hyprdots files from build, see build.sh for more details on the directory structure of hyprdots
       # TODO: port entire hyprdots config to nix, below listed by priority
-      # .gtkrc-2.0
-      # .p10k.zsh
-      #   - Kvantum
-      # - .config/
-      #   - fish
-      #   - kitty
-      #   - hyde
-
-      #   - rofi
-      #   - dunst
-      #   - waybar
-      #   - swaylock
-
-      #   - Code-OSS/User
-      #   - Code/User
-
-      #   - fastfetch
-
-      #   - lsd
-      #   - menus
-
-      #   - wlogout
-      #   - xsettingsd
-      #   - baloofilerc
-      #   - dolphinrc
-
-      #   - libinput-gestures.conf
-      #   - low priority
-      #     - MangoHud
-
-      # handled by stylix OR not required
-
-      #   - kdeglobals
-      #   - gtk-3.0
-      #   - nwg-look
-      #   - qt5ct
-      #   - qt6ct
-      #   - spotify-flags.conf
-
-      # done
-
-      #   - hypr
 
       {
         ".config/hyde" = {
@@ -189,27 +229,6 @@ in
       {
         ".themes" = {
           source = "${hyprdotsDrv}/hyprdots/.themes";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/qt5ct" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/qt5ct";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/qt6ct" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/qt6ct";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/Kvantum" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/Kvantum";
           recursive = true;
         };
       }
@@ -295,16 +314,6 @@ in
       #   }
       # ) (builtins.readDir "${hyprdotsDrv}/hyprdots"))
 
-      # User specified file overrides
-      (mapAttrs' (
-        name: path:
-        nameValuePair name {
-          source = path;
-          recursive = true;
-          force = true;
-        }
-      ) cfg.fileOverrides)
-
       #! useful debugging files
       {
         # Lists all files in the hyprdots directory
@@ -344,28 +353,14 @@ in
     # GTK configuration
     gtk = {
       enable = true;
+      # TODO: adding icons via gtk fixes icons however breaks rofi icons from showing
       iconTheme = {
         name = themes.${cfg.theme}.iconTheme.name;
         package = themes.${cfg.theme}.iconTheme.package;
       };
     };
 
-    fonts = {
-      fontconfig = {
-        enable = true;
-        defaultFonts = {
-          # sansSerif = themes.${cfg.theme}.font.sansSerif.name;
-          # monospace = themes.${cfg.theme}.font.monospace.name;
-        };
-      };
-    };
-
-    # Qt
-    qt = {
-      enable = true;
-      platformTheme.name = "gtk";
-    };
-
+    # TODO: (home-manager) implement optionals eg. fish, kitty, etc
     programs = {
       home-manager.enable = true;
       git = {
@@ -384,9 +379,7 @@ in
         enable = true;
         defaultEditor = true;
       };
-      swaylock = {
-        enable = true;
-      };
+      swaylock.enable = true;
       zsh = {
         enable = true;
         enableCompletion = true;
@@ -402,7 +395,7 @@ in
         };
         initExtra = ''
           source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-          source ~/.p10k.zsh
+          # source ~/.p10k.zsh
         '';
         initExtraFirst = ''
           #Display Pokemon
@@ -417,13 +410,10 @@ in
       };
     };
 
-    home.sessionVariables = {
-      XDG_DATA_DIRS = "$XDG_DATA_DIRS:${pkgs.zsh}/share";
-    };
-
+    # TODO: (stylix) add font support from themes
+    # TODO: (stylix) add overrides from themes
     stylix = {
       # image is required, this is the primary color that generates base16 themes
-      # TODO: create override
       image = config.lib.stylix.pixel "base00";
       enable = true;
       polarity = themes.${cfg.theme}.polarity;
@@ -434,8 +424,11 @@ in
       };
       targets = {
         neovim.transparentBackground.main = true;
+        kitty.variant256Colors = true;
+        # TODO: (stylix) add gtk extraCSS
       };
     };
 
+    dconf.enable = true;
   };
 }

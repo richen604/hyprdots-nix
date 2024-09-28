@@ -2,10 +2,9 @@
 
 {
 
-  # TODO: feat: fetch all themes from hyde-gallery and edit sha256
-  # TODO: feat: add settings for all themes
   # TODO: Documentation for themes
-  # TODO: wallpapers fetch
+  # TODO: refactor themes to be their own modules
+  # TODO: download wallpapers manually
   # Themes can be configured here. supports hyprdots themes and base16 themes.
   # wallpapers can be either fetched or in a local path.
   # Hyprdots themes: https://github.com/hyprdots/hyde-gallery
@@ -13,8 +12,11 @@
 
   # ----------- HYDE THEMES -----------
   "Catppuccin Mocha" = {
-    # most hyde themes are base16 
     base16 = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    gtk = {
+      package = pkgs.catppuccin-gtk;
+      name = "Catppuccin-Mocha";
+    };
     iconTheme = {
       package = pkgs.tela-circle-icon-theme.override {
         colorVariants = [ "dracula" ];
@@ -22,7 +24,6 @@
       name = "Tela-circle-dracula";
     };
     polarity = "dark";
-    # fetch wallpapers from hyde-themes
     wallpapers = pkgs.fetchFromGitHub {
       owner = "prasanthrangan";
       repo = "hyde-themes";
@@ -45,8 +46,79 @@
       name = "Bibata-Modern-Ice";
       size = 20;
     };
-    misc = {
-      waybarBlur = true;
+    themeOverrides = {
+      waybar = {
+        theme = ''
+          @define-color bar-bg rgba(0, 0, 0, 0);
+          @define-color main-bg #11111b;
+          @define-color main-fg #cdd6f4;
+          @define-color wb-act-bg #a6adc8;
+          @define-color wb-act-fg #313244;
+          @define-color wb-hvr-bg #f5c2e7;
+          @define-color wb-hvr-fg #313244;
+        '';
+      };
+      rofi = {
+        theme = ''
+          * {
+              main-bg:            #11111be6;
+              main-fg:            #cdd6f4ff;
+              main-br:            #cba6f7ff;
+              main-ex:            #f5e0dcff;
+              select-bg:          #b4befeff;
+              select-fg:          #11111bff;
+              separatorcolor:     transparent;
+              border-color:       transparent;
+          }
+        '';
+      };
+      hyprland = {
+        settings = {
+          exec = ''
+            gsettings set org.gnome.desktop.interface icon-theme 'Tela-circle-dracula'
+            gsettings set org.gnome.desktop.interface gtk-theme 'Catppuccin-Mocha'
+            gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+          '';
+
+          general = {
+            gaps_in = 3;
+            gaps_out = 8;
+            border_size = 2;
+            col = {
+              active_border = "rgba(ca9ee6ff) rgba(f2d5cfff) 45deg";
+              inactive_border = "rgba(b4befecc) rgba(6c7086cc) 45deg";
+            };
+            layout = "dwindle";
+            resize_on_border = true;
+          };
+
+          group = {
+            col = {
+              border_active = "rgba(ca9ee6ff) rgba(f2d5cfff) 45deg";
+              border_inactive = "rgba(b4befecc) rgba(6c7086cc) 45deg";
+              border_locked_active = "rgba(ca9ee6ff) rgba(f2d5cfff) 45deg";
+              border_locked_inactive = "rgba(b4befecc) rgba(6c7086cc) 45deg";
+            };
+          };
+
+          decoration = {
+            rounding = 10;
+            drop_shadow = false;
+
+            blur = {
+              enabled = true;
+              size = 6;
+              passes = 3;
+              new_optimizations = "on";
+              ignore_opacity = "on";
+              xray = false;
+            };
+          };
+
+          layerrule = "blur,waybar";
+        };
+      };
+      kitty.themeFile = "${pkgs.kitty-themes}/themes/Catppuccin-Mocha.conf";
     };
   };
   "Catppuccin Latte" = {
@@ -144,7 +216,11 @@
     };
   };
   "Tokyo Night" = {
-    base16 = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
+    base16 = "${pkgs.base16-schemes}/share/themes/tokyo-night-terminal-dark.yaml";
+    gtk = {
+      package = pkgs.tokyonight-gtk-theme;
+      name = "Tokyo-Night";
+    };
     iconTheme = {
       package = pkgs.tela-circle-icon-theme.override {
         colorVariants = [ "purple" ];

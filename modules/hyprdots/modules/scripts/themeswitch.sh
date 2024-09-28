@@ -69,6 +69,7 @@ source "${scrDir}/globalcontrol.sh"
 
 #// hypr
 
+# TODO: (nixifiy themeswitch.sh / new hyde.conf) migrate from hyde.conf, cant write
 sed '1d' "${hydeThemeDir}/hypr.theme" > "${confDir}/hypr/themes/theme.conf"
 gtkTheme="$(
 { grep -q "^[[:space:]]*\$GTK-THEME\s*=" "${hydeThemeDir}/hypr.theme" && grep "^[[:space:]]*\$GTK-THEME\s*=" "${hydeThemeDir}/hypr.theme" | cut -d '=' -f2 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' ;} || 
@@ -81,6 +82,7 @@ grep 'gsettings set org.gnome.desktop.interface icon-theme' "${hydeThemeDir}/hyp
 
 #// qtct
 
+# TODO: (nixifiy themeswitch.sh) dont need this
 sed -i "/^icon_theme=/c\icon_theme=${gtkIcon}" "${confDir}/qt5ct/qt5ct.conf"
 sed -i "/^icon_theme=/c\icon_theme=${gtkIcon}" "${confDir}/qt6ct/qt6ct.conf"
 sed -i "/^Theme=/c\Theme=${gtkIcon}" "${confDir}/kdeglobals"
