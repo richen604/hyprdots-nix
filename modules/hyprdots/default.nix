@@ -152,7 +152,12 @@ in
       kdePackages.qt6ct # qt6 configuration tool
       libsForQt5.qtstyleplugin-kvantum # svg based qt6 theme engine
       kdePackages.qtstyleplugin-kvantum # svg based qt5 theme engine
-
+      gtk3 # gtk3
+      gtk4 # gtk4
+      glib # gtk theme management
+      gsettings-desktop-schemas # gsettings schemas
+      themes.${cfg.theme}.iconTheme.package # icon theme
+      desktop-file-utils # for updating desktop database
       # --------------------------------------------------- // Applications
 
       firefox # browser
@@ -190,147 +195,64 @@ in
       # --------------------------------------------------- // HyDE
       # hyde-cli-git # cli tool to manage hyde # TODO: future: build hydecli with script changes?
 
-      #! others
-
-      # GTK Themeing
-      # gtk3
-      # gtk4
-      # gsettings-desktop-schemas
-      # gnome-settings-daemon
-      # glib
-      # libsForQt5.qtstyleplugins
-      # kdePackages.qtstyleplugin-kvantum
-
-      # Fonts
-      # meslo-lgs-nf
-
       # Hyprdots
       hyprdotsDrv
-
-      # Add the icon theme package
-
-      # coreutils
-      # findutils
+      home-manager
 
     ];
-
-    home.file = mkMerge [
-
+    home.file = {
       # Main hyprdots files from build, see build.sh for more details on the directory structure of hyprdots
       # TODO: port entire hyprdots config to nix, below listed by priority
-
-      {
-        ".config/hyde" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/hyde";
-          recursive = true;
-        };
-      }
-
-      {
-        ".themes" = {
-          source = "${hyprdotsDrv}/hyprdots/.themes";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/cava" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/cava";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/fish" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/fish";
-          recursive = true;
-        };
-      }
-
-      {
-        ".local/share/bin" = {
-          source = ./modules/scripts;
-          recursive = true;
-          force = true;
-        };
-      }
-
-      {
-        ".config/rofi" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/rofi";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/waybar" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/waybar";
-          recursive = true;
-        };
-      }
-
-      # {
-      #   ".config/swaylock" = {
-      #     source = "${hyprdotsDrv}/hyprdots/.config/swaylock";
-      #     recursive = true;
-      #     force = true;
-      #   };
-      # }
-
-      {
-        ".p10k.zsh" = {
-          source = "${hyprdotsDrv}/hyprdots/.p10k.zsh";
-          force = true;
-        };
-      }
-
-      {
-        ".config/dunst" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/dunst";
-          recursive = true;
-        };
-      }
-
-      {
-        ".config/dolphinrc" = {
-          source = "${hyprdotsDrv}/hyprdots/.config/dolphinrc";
-          recursive = true;
-        };
-      }
-
-      # {
-      #   ".config/kitty" = {
-      #     source = "${hyprdotsDrv}/hyprdots/.config/kitty";
-      #     recursive = true;
-      #   };
-      # }
-
-      # (mapAttrs' (
-      #   name: _:
-      #   nameValuePair "${name}" {
-      #     source = "${hyprdotsDrv}/hyprdots/${name}";
-      #     recursive = true;
-      #     force = false;
-      #   }
-      # ) (builtins.readDir "${hyprdotsDrv}/hyprdots"))
-
-      #! useful debugging files
-      {
-        # Lists all files in the hyprdots directory
-        "hyprdots_ls.txt" = {
-          text = builtins.readFile (
-            pkgs.runCommand "ls-hyprdots" { } ''
-              ls -Ra ${hyprdotsDrv}/hyprdots > $out
-            ''
-          );
-        };
-        # Lists the build command and arguments
-        "hyprdots_build.txt" = {
-          source = "${hyprdotsDrv}/hyprdots/hyprdots_build.txt";
-          force = false;
-        };
-      }
-    ];
+      ".config/hyde" = {
+        source = "${hyprdotsDrv}/hyprdots/.config/hyde";
+        recursive = true;
+      };
+      ".config/cava" = {
+        source = "${hyprdotsDrv}/hyprdots/.config/cava";
+        recursive = true;
+      };
+      ".config/fish" = {
+        source = "${hyprdotsDrv}/hyprdots/.config/fish";
+        recursive = true;
+      };
+      ".local/share/bin" = {
+        source = ./modules/scripts;
+        recursive = true;
+        force = true;
+      };
+      ".config/rofi" = {
+        source = "${hyprdotsDrv}/hyprdots/.config/rofi";
+        recursive = true;
+      };
+      ".config/waybar" = {
+        source = "${hyprdotsDrv}/hyprdots/.config/waybar";
+        recursive = true;
+      };
+      ".p10k.zsh" = {
+        source = "${hyprdotsDrv}/hyprdots/.p10k.zsh";
+        force = true;
+      };
+      ".config/dunst" = {
+        source = "${hyprdotsDrv}/hyprdots/.config/dunst";
+        recursive = true;
+      };
+      ".config/dolphinrc" = {
+        source = "${hyprdotsDrv}/hyprdots/.config/dolphinrc";
+        recursive = true;
+      };
+      # Useful debugging files
+      "hyprdots_ls.txt" = {
+        text = builtins.readFile (
+          pkgs.runCommand "ls-hyprdots" { } ''
+            ls -Ra ${hyprdotsDrv}/hyprdots > $out
+          ''
+        );
+      };
+      "hyprdots_build.txt" = {
+        source = "${hyprdotsDrv}/hyprdots/hyprdots_build.txt";
+        force = false;
+      };
+    };
 
     home.activation = {
       runSwwwallcache = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
@@ -353,10 +275,29 @@ in
     # GTK configuration
     gtk = {
       enable = true;
-      # TODO: adding icons via gtk fixes icons however breaks rofi icons from showing
       iconTheme = {
         name = themes.${cfg.theme}.iconTheme.name;
         package = themes.${cfg.theme}.iconTheme.package;
+      };
+    };
+
+    home.sessionVariables = {
+      NIXOS_OZONE_WL = "1";
+    };
+
+    xdg = {
+      enable = true;
+      userDirs = {
+        enable = true;
+        createDirectories = true;
+        desktop = "$HOME/Desktop";
+        documents = "$HOME/Documents";
+        download = "$HOME/Downloads";
+        music = "$HOME/Music";
+        pictures = "$HOME/Pictures";
+        publicShare = "$HOME/Public";
+        templates = "$HOME/Templates";
+        videos = "$HOME/Videos";
       };
     };
 
@@ -395,7 +336,7 @@ in
         };
         initExtra = ''
           source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-          # source ~/.p10k.zsh
+          source ~/.p10k.zsh
         '';
         initExtraFirst = ''
           #Display Pokemon
@@ -425,10 +366,22 @@ in
       targets = {
         neovim.transparentBackground.main = true;
         kitty.variant256Colors = true;
-        # TODO: (stylix) add gtk extraCSS
+        gtk.extraCss = ''
+          gtk-cursor-theme-size=20
+          gtk-toolbar-style=GTK_TOOLBAR_ICONS
+          gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+          gtk-button-images=0
+          gtk-menu-images=0
+          gtk-enable-event-sounds=1
+          gtk-enable-input-feedback-sounds=0
+          gtk-xft-antialias=1
+          gtk-xft-hinting=1
+          gtk-xft-hintstyle=hintfull
+          gtk-xft-rgba=rgb
+          gtk-application-prefer-dark-theme=0
+        '';
       };
     };
 
-    dconf.enable = true;
   };
 }

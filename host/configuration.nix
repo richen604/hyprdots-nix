@@ -5,6 +5,7 @@
   host,
   lib,
   defaultPassword,
+  home-manager,
   ...
 }:
 {
@@ -89,7 +90,7 @@
     };
     dbus.enable = true;
     xserver = {
-      enable = false;
+      enable = true;
       videoDrivers = [ "amdgpu" ];
     };
     openssh.enable = true;
@@ -97,6 +98,7 @@
       sddm = {
         enable = true;
         wayland.enable = true;
+
         package = pkgs.kdePackages.sddm;
       };
       sessionPackages = [ pkgs.hyprland ];
@@ -142,52 +144,25 @@
   users.defaultUserShell = pkgs.zsh;
 
   # ===== Nix Configuration =====
-  nix.settings = {
-    auto-optimise-store = true;
-    experimental-features = [
-      "nix-command"
-      "flakes"
-    ];
-    substituters = [ "https://cache.nixos.org" ];
-    trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
-    extra-substituters = [
-      "https://hyprland.cachix.org"
-      "https://nix-community.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
+  nix = {
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      substituters = [ "https://cache.nixos.org" ];
+      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      extra-substituters = [
+        "https://hyprland.cachix.org"
+        "https://nix-community.cachix.org"
+      ];
+      extra-trusted-public-keys = [
+        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
+    };
   };
-
-  # ===== System Packages =====
-  environment.systemPackages = with pkgs; [
-    # TODO: test remove these
-    # Core Packages
-    # lld
-    # gcc
-    # glibc
-    # clang
-    # udev
-    # llvmPackages.bintools
-    # wget
-    # procps
-    killall
-    # light
-    # xdg-utils
-    # alsaLib
-    # pkg-config
-    # usbutils
-    # lxqt.lxqt-policykit
-    # mesa
-    # ffmpeg
-    # gsettings-qt
-    # flatpak
-    # xorg.libX11
-    # xorg.libXcursor
-    # openssh
-    # wl-clipboard
-  ];
 
   # ===== Program Configurations =====
   programs = {
@@ -217,13 +192,9 @@
 
   # ===== Environment Configuration =====
   environment = {
-    sessionVariables.NIXOS_OZONE_WL = "1";
-    # shellInit = ''
-    #   if [ -d $HOME/.nix-profile/share/applications ]; then
-    #     XDG_DATA_DIRS="$HOME/.nix-profile/share:$XDG_DATA_DIRS"
-    #   fi
-    # '';
-
+    sessionVariables = {
+      NIXOS_OZONE_WL = "1";
+    };
   };
 
   # ===== System Version =====
