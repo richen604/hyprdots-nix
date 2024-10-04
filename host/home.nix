@@ -28,7 +28,6 @@
       userName = "${gitUser}";
       userEmail = "${gitEmail}";
     };
-    theme = "Tokyo Night";
   };
 
   home.stateVersion = "24.11";

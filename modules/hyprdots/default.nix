@@ -197,7 +197,6 @@ in
 
       # Hyprdots
       hyprdotsDrv
-      home-manager
 
     ];
     home.file = {

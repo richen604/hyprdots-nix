@@ -11,7 +11,7 @@
 {
 
   imports = [
-    ./hardware-configuration.nix
+    # ./hardware-configuration.nix
   ];
 
   # ===== Boot Configuration =====
@@ -145,6 +145,7 @@
 
   # ===== Nix Configuration =====
   nix = {
+    package = pkgs.nix;
     settings = {
       auto-optimise-store = true;
       experimental-features = [

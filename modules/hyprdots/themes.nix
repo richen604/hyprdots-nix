@@ -29,7 +29,7 @@
       repo = "hyde-themes";
       name = "wallpapers";
       rev = "d2052a18ed6e1f9e6d70c3431d27bf94f42be628";
-      sha256 = "sha256-99wmu1R/Q9tuithyYBlxlEvkixY4Ea6S/Pgdimdqhj4=";
+      sha256 = "sha256-YbT1Rm49igI3H1wH21V5f+npjgbj0ya0Dfh9tM62nVI=";
     };
     font = {
       sansSerif = {
