@@ -1,7 +1,4 @@
 {
-  config,
-  lib,
-  pkgs,
   username,
   gitUser,
   gitEmail,
@@ -14,15 +11,20 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
-    ../modules/hyprdots
-    ../modules/hyprdots-hyde.nix
+    # ../modules/hyprdots
+    # ../modules/hyprdots-hyde.nix
+    ../modules/hydenix
   ];
 
-  # modules.hyprdots-hyde = {
+  # programs.hyprdots = {
   #   enable = true;
+  #   git = {
+  #     userName = "${gitUser}";
+  #     userEmail = "${gitEmail}";
+  #   };
   # };
 
-  programs.hyprdots = {
+  modules.hydenix = {
     enable = true;
     git = {
       userName = "${gitUser}";

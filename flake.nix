@@ -89,7 +89,12 @@
             stylix.homeManagerModules.stylix
           ];
           extraSpecialArgs = {
-            inherit username gitUser gitEmail;
+            inherit
+              username
+              gitUser
+              gitEmail
+
+              ;
           };
         };
       };

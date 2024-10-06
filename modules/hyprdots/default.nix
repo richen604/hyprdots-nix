@@ -9,44 +9,13 @@ with lib;
 
 let
   cfg = config.programs.hyprdots;
-
   themes = import ./themes.nix { inherit pkgs lib; };
-
-  hyprdotsDrv = pkgs.stdenv.mkDerivation {
-    pname = "hyprdots";
-    version = "0.1.0";
-    srcs = [
-      (pkgs.fetchFromGitHub {
-        owner = "prasanthrangan";
-        repo = "hyprdots";
-        rev = "7881e8503857dbe702409d882cc709af8e9f720d";
-        name = "hyprdots-source";
-        sha256 = "sha256-Xm8HM7+rU4u43X0sLholBk46XTm5kp+ooMLFyPX6GhA=";
-      })
-    ];
-
-    sourceRoot = ".";
-    buildInputs = [ pkgs.jq ];
-
-    buildPhase = ''
-      ${pkgs.bash}/bin/bash ${./build.sh} '${
-        builtins.toJSON {
-          inherit (cfg) theme;
-          wallpapers = themes.${cfg.theme}.wallpapers;
-        }
-      }'
-    '';
-
-    # #! useful debugging files
-    # installPhase = ''
-    #   false
-    # '';
-
-  };
+  packages = import ../packages { inherit pkgs cfg themes; };
 in
 {
   imports = [
     ./modules/hypr
+    packages
   ];
   options.programs.hyprdots = {
     enable = mkEnableOption "enable hyprdots";
@@ -327,18 +296,13 @@ in
         syntaxHighlighting.enable = true;
         oh-my-zsh = {
           enable = true;
-          plugins = [
-            "git"
-            "history"
-            "sudo"
-          ];
         };
         initExtra = ''
           source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
           source ~/.p10k.zsh
         '';
         initExtraFirst = ''
-          #Display Pokemon
+          #Display Pokemonks
           pokemon-colorscripts --no-title -r 1-3
           # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
           # Initialization code that may require console input (password prompts, [y/n]
