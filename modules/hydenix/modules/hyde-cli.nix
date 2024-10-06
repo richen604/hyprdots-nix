@@ -10,8 +10,8 @@ let
   hyde-cli = pkgs.fetchFromGitHub {
     owner = "HyDE-Project";
     repo = "Hyde-cli";
-    rev = "master";
-    sha256 = "sha256-kP0UfggKHU6spA4UbZeHRP9guCfzroDxgahjTPORM3g=";
+    rev = "refs/tags/v0.6.0";
+    sha256 = "sha256-aMMTurz+7QbId3S8jYhWhiA/ZS/L3TbII9/PPD1f+tg=";
   };
 
   hyde-cli-derivation = pkgs.stdenv.mkDerivation {
