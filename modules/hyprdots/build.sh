@@ -14,6 +14,7 @@ main() {
     # Parse JSON arguments
     args="$1"
     theme=$(echo "$args" | jq -r '.theme')
+    wallpapers=$(echo "$args" | jq -r '.wallpapers')
 
     echo "Configuring theme: $theme"
 
@@ -28,21 +29,28 @@ main() {
 
     echo "Copying source and theme..."
     cp -r ./hyprdots-source/Configs/. "$out"/hyprdots
-    cp -r ./hyprdots-theme/Configs/. "$out"/hyprdots
-    cp -r "./hyprdots-theme/Configs/.config/hyde/themes/${theme}/wallpapers/." "$out"/hyprdots/wallpapers
 
-    ls -aR "$out"/hyprdots/wallpapers
+    # Handle different wallpaper directory structures
+    if [ -d "$wallpapers/Configs/" ]; then
+        mkdir -p "$out"/hyprdots/.config/hyde/themes/"$theme"/
+        cp -r "$wallpapers/Configs/.config/hyde/themes/$theme/." "$out"/hyprdots/.config/hyde/themes/"$theme"/
+    else
+        mkdir -p "$out"/hyprdots/.config/hyde/themes/"$theme"/
+        cp -r "$wallpapers" "$out"/hyprdots/.config/hyde/themes/"$theme"/
+    fi
 
+    ls -aR "$out"/hyprdots/.config/hyde/themes/"$theme"/wallpapers
 
     rm -rf "$out"/hyprdots/.gtkrc-2.0
     rm -rf "$out"/hyprdots/.zshrc
+    rm -rf "$out"/hyprdots/.local/share/bin/
 
     echo "Script fixes"
     # ensure all hyprdots scripts are executable
     find "$out"/hyprdots -type f -executable -print0 | xargs -0 -I {} sed -i '1s|^#!.*|#!/usr/bin/env bash|' {}
 
     # Update waybar killall command in all hyprdots files
-    find "$out"/hyprdots/.config/hypr -type f -print0 | xargs -0 sed -i 's/killall .waybar-wrapped/killall .waybar-wrapped/g'
+    find "$out"/hyprdots/.local/share/bin -type f -print0 | xargs -0 sed -i 's/killall waybar/killall .waybar-wrapped/g'
 
     # update dunst
     find "$out"/hyprdots/.local/share/bin -type f -print0 | xargs -0 sed -i 's/killall dunst/killall .dunst-wrapped/g'
@@ -51,6 +59,7 @@ main() {
     find "$out"/hyprdots -type f -executable -print0 | xargs -0 sed -i 's/find "/find -L "/g'
     find "$out"/hyprdots -type f -name "*.sh" -print0 | xargs -0 sed -i 's/find "/find -L "/g'
 
+
     # add a rofi fix to hyprdots
     echo '
     # rofi fix
@@ -58,11 +67,6 @@ main() {
     windowrulev2 = center,class:^(Rofi)$
     windowrulev2 = noborder,class:^(Rofi)$
     ' >> "$out"/hyprdots/.config/hypr/windowrules.conf
-
-    echo "Applying theme configuration..."
-    # Add actual theme configuration commands here
-
-    echo "Build process completed."
 }
 
 # Run main function and redirect output to log file
