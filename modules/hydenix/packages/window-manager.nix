@@ -5,7 +5,7 @@
     # --------------------------------------------------- // Window Manager
     hyprland # wlroots-based wayland compositor
     dunst # notification daemon
-    rofi-wayland-unwrapped # application launcher
+    rofi-wayland # application launcher
     waybar # system bar
     swww # wallpaper
     swaylock # lock screen

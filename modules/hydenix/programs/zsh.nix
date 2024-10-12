@@ -36,10 +36,9 @@
       # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh
       [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh  
 
-      source $HOME/Hyde-cli/shell-completions/Hyde.zsh
+      source $HOME/.local/Hyde-cli/shell-completions/Hyde.zsh
 
       export PATH=$HOME/.local/bin:$PATH
-      export PATH=$HOME/Hyde-cli/:$PATH
     '';
     initExtraFirst = ''
       #Display Pokemonks

@@ -16,5 +16,7 @@
     glib # gtk theme management
     gsettings-desktop-schemas # gsettings schemas
     desktop-file-utils # for updating desktop database
+    tela-circle-icon-theme # icon theme
+    bibata-cursors # cursor theme
   ];
 }

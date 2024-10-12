@@ -8,7 +8,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    stylix.url = "github:danth/stylix";
   };
 
   outputs =
@@ -16,7 +15,6 @@
       self,
       nixpkgs,
       home-manager,
-      stylix,
       ...
     }:
     let
@@ -47,13 +45,13 @@
             pkgs
             nixpkgs
             home-manager
-            stylix
             username
             gitUser
             gitEmail
             host
             defaultPassword
             system
+
             ;
         };
 
@@ -63,13 +61,13 @@
               nixpkgs
               pkgs
               home-manager
-              stylix
               username
               gitUser
               gitEmail
               host
               defaultPassword
               system
+
               ;
           };
         };
@@ -86,14 +84,12 @@
           inherit pkgs;
           modules = [
             ./host/home.nix
-            stylix.homeManagerModules.stylix
           ];
           extraSpecialArgs = {
             inherit
               username
               gitUser
               gitEmail
-
               ;
           };
         };

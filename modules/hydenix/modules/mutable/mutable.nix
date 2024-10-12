@@ -73,18 +73,16 @@ in
           let
             source = lib.escapeShellArg file.source;
             target = lib.escapeShellArg file.target;
-            recursiveFlag = if (file.recursive or false) then "-R" else "";
+            recursiveFlag = if (file.recursive or false) then "-r" else "";
           in
           ''
-            $VERBOSE_ECHO "${source} -> ${target}"
-            if [ -d ${source} ]; then
-              $DRY_RUN_CMD mkdir -p ${target}
-              $DRY_RUN_CMD cp ${recursiveFlag} --remove-destination --preserve=mode ${source}/. ${target}/
+            $VERBOSE_ECHO "Copying mutable file: ${source} -> ${target}"
+            if [ ${recursiveFlag} != "" ]; then
+              $DRY_RUN_CMD cp -R --remove-destination --no-preserve=mode ${source}/. ${target}
             else
-              $DRY_RUN_CMD cp ${recursiveFlag} --remove-destination --preserve=mode ${source} ${target}
+              $DRY_RUN_CMD cp --remove-destination --no-preserve=mode ${source} ${target}
             fi
-            $DRY_RUN_CMD chmod -R u+rwX,go+rX,go-w ${target}
-            $DRY_RUN_CMD chown -R $USER:users ${target}
+            $DRY_RUN_CMD chmod -R u+wx ${target}
           ''
         );
 

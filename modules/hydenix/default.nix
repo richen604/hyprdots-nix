@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -15,7 +14,6 @@ in
     ./modules
     ./packages
     ./programs
-    ./themes
   ];
 
   options.modules.hydenix = {
@@ -36,6 +34,15 @@ in
     modules = {
       hyde.enable = true;
       hyde-cli.enable = true;
+    };
+
+    home.sessionVariables = {
+      ELECTRON_OZONE_PLATFORM_HINT = "auto";
+      MOZ_ENABLE_WAYLAND = 1;
+      XDG_SESSION_TYPE = "wayland";
+      QT_QPA_PLATFORM = "wayland";
+      GDK_BACKEND = "wayland";
+      NIXOS_OZONE_WL = "1";
     };
   };
 }

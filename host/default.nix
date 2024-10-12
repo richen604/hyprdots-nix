@@ -1,7 +1,6 @@
 {
   nixpkgs,
   home-manager,
-  stylix,
   username,
   gitUser,
   gitEmail,
@@ -34,11 +33,15 @@ nixpkgs.lib.nixosSystem {
         {
           imports = [
             ./home.nix
-            stylix.homeManagerModules.stylix
           ];
         };
       home-manager.extraSpecialArgs = {
-        inherit username gitUser gitEmail;
+        inherit
+          username
+          gitUser
+          gitEmail
+
+          ;
       };
     }
   ];

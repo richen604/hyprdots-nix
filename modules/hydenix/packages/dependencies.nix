@@ -22,5 +22,6 @@
     killall # for killing processes
     wl-clipboard # clipboard for wayland
     gnumake # for building hyde
+    hyprcursor # cursor theme
   ];
 }

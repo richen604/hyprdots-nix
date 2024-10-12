@@ -5,84 +5,88 @@
   ...
 }:
 
-with lib;
-
 let
   cfg = config.modules.hyde;
 
-  # https://github.com/prasanthrangan/hyprdots/commit/2a0abfd56ce951e75213a1a91e2743a859304713
-  hyprdotsRepo = pkgs.fetchFromGitHub {
-    owner = "prasanthrangan";
-    repo = "hyprdots";
-    rev = "2a0abfd56ce951e75213a1a91e2743a859304713";
-    sha256 = "sha256-lSMO2V4eydXQPXJ4NbcciymC2sto3t/Wn/FLBd9mXo0=";
-  };
+  themes = import ./sources/themes.nix { inherit pkgs; };
 
-  hyprdotsDerivation = pkgs.stdenv.mkDerivation {
-    name = "hyprdots-modified";
-    src = hyprdotsRepo;
+  hyprdots = import ./sources/hyde.nix { inherit pkgs; };
+  hyde-cli = import ./sources/hyde-cli.nix { inherit pkgs lib; };
 
-    buildPhase = ''
-      # ensure all hyprdots scripts are executable
-      find . -type f -executable -print0 | xargs -0 -I {} sed -i '1s|^#!.*|#!/usr/bin/env bash|' {}
-
-      # Update waybar killall command in all hyprdots files
-      find . -type f -print0 | xargs -0 sed -i 's/killall waybar/killall .waybar-wrapped/g'
-
-      # update dunst
-      find . -type f -print0 | xargs -0 sed -i 's/killall dunst/killall .dunst-wrapped/g'
-    '';
-
-    installPhase = ''
-      mkdir -p $out
-      cp -r . $out/
-    '';
-  };
 in
 {
   options.modules.hyde = {
-    enable = mkEnableOption "Hyde";
+    enable = lib.mkEnableOption "Hyde";
+
+    themes = lib.mkOption {
+      type = lib.types.listOf lib.types.string;
+      default = [
+        "Catppuccin Mocha"
+      ];
+    };
   };
 
-  config = mkIf cfg.enable {
-    home.file = {
-      ".config" = {
-        source = "${hyprdotsDerivation}/Configs/.config";
-        force = true;
-        recursive = true;
-        mutable = true;
-      };
-      ".local/share" = {
-        source = "${hyprdotsDerivation}/Configs/.local/share";
-        force = true;
-        recursive = true;
-        mutable = true;
-        executable = true;
-      };
-      ".icons/default" = {
-        source = "${hyprdotsDerivation}/Configs/.icons/default";
-        force = true;
-        recursive = true;
-        mutable = true;
-      };
-      ".p10k.zsh" = {
-        source = "${hyprdotsDerivation}/Configs/.p10k.zsh";
-        force = true;
-        mutable = true;
-        executable = true;
-      };
-      ".gtkrc-2.0" = {
-        source = "${hyprdotsDerivation}/Configs/.gtkrc-2.0";
-        force = true;
-        mutable = true;
-      };
-      ".local/hyprdots" = {
-        source = "${hyprdotsDerivation}";
-        force = true;
-        recursive = true;
-        mutable = true;
-        executable = true;
-      };
+  config = lib.mkIf cfg.enable {
+    home.file = lib.mkMerge [
+      {
+        ".config" = {
+          source = "${hyprdots.pkg}/Configs/.config";
+          force = true;
+          recursive = true;
+          mutable = true;
+        };
+        ".local/share" = {
+          source = "${hyprdots.pkg}/Configs/.local/share";
+          force = true;
+          recursive = true;
+          mutable = true;
+        };
+        ".icons/default" = {
+          source = "${hyprdots.pkg}/Configs/.icons/default";
+          force = true;
+          recursive = true;
+          mutable = true;
+        };
+        ".p10k.zsh" = {
+          source = "${hyprdots.pkg}/Configs/.p10k.zsh";
+          force = true;
+          mutable = true;
+        };
+        ".gtkrc-2.0" = {
+          source = "${hyprdots.pkg}/Configs/.gtkrc-2.0";
+          force = true;
+          mutable = true;
+        };
+        ".local/hyprdots" = {
+          source = hyprdots.pkg;
+          force = true;
+          recursive = true;
+          mutable = true;
+        };
+        ".themes/Wallbash-Gtk" = {
+          source = "${hyprdots.pkg}/unpacked/Wallbash-Gtk";
+          force = true;
+          recursive = true;
+          mutable = true;
+        };
+      }
+      # (lib.mapAttrs' (
+      #   name: value:
+      #   lib.nameValuePair ".config/hyde/themes/${name}" {
+      #     source = value.theme;
+      #     force = true;
+      #     recursive = true;
+      #     mutable = true;
+      #   }
+      # ) themes)
+    ];
+
+    home.activation = {
+      # importHydeTheme = lib.hm.dag.entryAfter [ "hydeLink" ] ''
+      #     export PATH="${lib.makeBinPath hyde-cli.buildInputs}:$PATH"
+
+      #     $DRY_RUN_CMD env FORCE_THEME_UPDATE=true ${hyde-cli.pkg}/bin/Hyde theme import "Mac OS" $HOME/.cache/hyde/themes/Mac-Os
+      #   # '';
     };
   };
 }

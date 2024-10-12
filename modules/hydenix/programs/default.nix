@@ -1,5 +1,3 @@
-{ pkgs, ... }:
-
 {
 
   imports = [
@@ -10,10 +8,6 @@
   programs = {
     home-manager.enable = true;
     kitty.enable = true;
-    rofi = {
-      enable = true;
-      package = pkgs.rofi-wayland-unwrapped;
-    };
     waybar.enable = true;
     vscode.enable = true;
     neovim = {
