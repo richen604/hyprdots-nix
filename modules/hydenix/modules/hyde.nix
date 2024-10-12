@@ -8,10 +8,12 @@
 let
   cfg = config.modules.hyde;
 
-  themes = import ./sources/themes.nix { inherit pkgs; };
+  themes = import ../sources/themes.nix { inherit pkgs; };
 
-  hyprdots = import ./sources/hyde.nix { inherit pkgs; };
-  hyde-cli = import ./sources/hyde-cli.nix { inherit pkgs lib; };
+  hyprdots = import ../sources/hyde.nix { inherit pkgs; };
+  hyde-cli = import ../sources/hyde-cli.nix { inherit pkgs lib; };
+
+  wallbash-gtk = import ../sources/wallbash-gtk.nix { inherit pkgs lib; };
 
 in
 {
@@ -64,7 +66,7 @@ in
           mutable = true;
         };
         ".themes/Wallbash-Gtk" = {
-          source = "${hyprdots.pkg}/unpacked/Wallbash-Gtk";
+          source = "${wallbash-gtk.pkg}";
           force = true;
           recursive = true;
           mutable = true;

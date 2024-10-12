@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.modules.hyde-cli;
-  hyde-cli = import ./sources/hyde-cli.nix { inherit pkgs lib; };
+  hyde-cli = import ../sources/hyde-cli.nix { inherit pkgs lib; };
 
 in
 {

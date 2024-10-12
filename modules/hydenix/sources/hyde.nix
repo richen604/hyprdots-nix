@@ -33,14 +33,6 @@ let
       #   windowrulev2 = center,class:^(Rofi)$
       #   windowrulev2 = noborder,class:^(Rofi)$
       #   ' >> ./Configs/.config/hypr/windowrules.conf
-
-
-      ls -la ./Source/arcs
-
-      mkdir -p ./unpacked
-
-      # unpack wallbash gtk theme
-      tar -xzf ./Source/arcs/Gtk_Wallbash.tar.gz -C ./unpacked/
     '';
 
     installPhase = ''
