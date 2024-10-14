@@ -26,6 +26,8 @@ let
       # remove continue 2 from restore_cfg.sh
       sed -i '/continue\ 2/d' ./Scripts/restore_cfg.sh
 
+      # nixify wallbashspotify.sh
+
       # # add a rofi fix to hyprdots
       # echo '
       #   # rofi fix

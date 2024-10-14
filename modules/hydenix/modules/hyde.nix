@@ -14,7 +14,7 @@ let
   hyde-cli = import ../sources/hyde-cli.nix { inherit pkgs lib; };
 
   wallbash-gtk = import ../sources/wallbash-gtk.nix { inherit pkgs lib; };
-
+  spicetify-sleek = import ../sources/spicetify-sleek.nix { inherit pkgs lib; };
 in
 {
   options.modules.hyde = {
@@ -65,12 +65,33 @@ in
           recursive = true;
           mutable = true;
         };
+
+        # Wallbash stuff
         ".themes/Wallbash-Gtk" = {
           source = "${wallbash-gtk.pkg}";
           force = true;
           recursive = true;
           mutable = true;
         };
+        ".config/spicetify/Themes/Sleek" = {
+          source = "${spicetify-sleek.pkg}";
+          force = true;
+          recursive = true;
+          mutable = true;
+        };
+
+        # TODO: add needed extensions to hyde cache landing
+        ".cache/hyde/landing/Code_Wallbash.vsix" = {
+          source = "${hyprdots.pkg}/Source/arcs/Code_Wallbash.vsix";
+          force = true;
+          mutable = true;
+        };
+        ".cache/hyde/landing/Spotify_Sleek.tar.gz" = {
+          source = "${hyprdots.pkg}/Source/arcs/Spotify_Sleek.tar.gz";
+          force = true;
+          mutable = true;
+        };
+
       }
       # (lib.mapAttrs' (
       #   name: value:

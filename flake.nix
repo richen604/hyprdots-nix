@@ -8,6 +8,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -16,7 +20,7 @@
       nixpkgs,
       home-manager,
       ...
-    }:
+    }@inputs:
     let
       system = "x86_64-linux";
 
@@ -51,8 +55,8 @@
             host
             defaultPassword
             system
-
             ;
+          spicetify-nix = inputs.spicetify-nix;
         };
 
         hyprdots-nix-vm = mkVM {
@@ -67,8 +71,8 @@
               host
               defaultPassword
               system
-
               ;
+            spicetify-nix = inputs.spicetify-nix;
           };
         };
       };

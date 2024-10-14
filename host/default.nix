@@ -8,6 +8,7 @@
   defaultPassword,
   system,
   pkgs,
+  spicetify-nix,
 }:
 
 nixpkgs.lib.nixosSystem {
@@ -20,6 +21,7 @@ nixpkgs.lib.nixosSystem {
       gitEmail
       host
       defaultPassword
+      spicetify-nix
       ;
   };
   modules = [
@@ -33,6 +35,7 @@ nixpkgs.lib.nixosSystem {
         {
           imports = [
             ./home.nix
+            spicetify-nix.homeManagerModules.default
           ];
         };
       home-manager.extraSpecialArgs = {
@@ -40,7 +43,7 @@ nixpkgs.lib.nixosSystem {
           username
           gitUser
           gitEmail
-
+          spicetify-nix
           ;
       };
     }

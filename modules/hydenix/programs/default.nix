@@ -4,6 +4,7 @@
     ./git.nix
     ./zsh.nix
     ./vscode.nix
+    ./spicetify.nix
   ];
 
   programs = {
