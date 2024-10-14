@@ -10,11 +10,18 @@
     parallel # for parallel processing
     jq # for json processing
     imagemagick # for image processing
-    kdePackages.qtimageformats # for dolphin image thumbnails
-    kdePackages.ffmpegthumbs # for dolphin video thumbnails
-    kdePackages.kde-cli-tools # for dolphin file type defaults
+    libsForQt5.qtimageformats # for dolphin image thumbnails
+    libsForQt5.ffmpegthumbs # for dolphin video thumbnails
+    libsForQt5.kde-cli-tools # for dolphin file type defaults
+    libsForQt5.kdegraphics-thumbnailers # for dolphin video thumbnails
+    libsForQt5.kimageformats # for dolphin image thumbnails
+    libsForQt5.qtwayland # for wayland support
+    libsForQt5.qtsvg # for svg thumbnails
+    libsForQt5.kio # for fuse support
+    libsForQt5.kio-extras # for extra protocol support
+    libsForQt5.kwayland # for wayland support
+    resvg # for svg thumbnails
     libnotify # for notifications
-    kdePackages.wayland # for wayland support
     xdg-desktop-portal-gtk # xdg desktop portal using gtk
     emote # emoji picker gtk3
     flatpak # package manager for flathub

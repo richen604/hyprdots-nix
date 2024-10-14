@@ -5,7 +5,7 @@
     # --------------------------------------------------- // Applications
     firefox # browser
     kitty # terminal
-    dolphin # kde file manager
+    libsForQt5.dolphin # kde file manager
     ark # kde file archiver
     vim # terminal text editor
     vscode # ide text editor

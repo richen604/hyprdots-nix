@@ -1,11 +1,8 @@
 {
-  config,
   pkgs,
   username,
   host,
-  lib,
   defaultPassword,
-  home-manager,
   ...
 }:
 {
