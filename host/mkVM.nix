@@ -1,4 +1,4 @@
-{ username }:
+{ username, ... }:
 { nixosSystem, ... }:
 nixosSystem.extendModules {
   modules = [

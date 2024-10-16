@@ -46,35 +46,11 @@
   # ===== Security =====
   security = {
     polkit.enable = true;
-    sudo = {
-      enable = true;
-      extraRules = [
-        {
-          commands = [
-            {
-              command = "${pkgs.systemd}/bin/reboot";
-              options = [ "NOPASSWD" ];
-            }
-            {
-              command = "${pkgs.systemd}/bin/poweroff";
-              options = [ "NOPASSWD" ];
-            }
-            {
-              command = "${pkgs.systemd}/bin/shutdown";
-              options = [ "NOPASSWD" ];
-            }
-          ];
-          groups = [ "wheel" ];
-        }
-      ];
-    };
   };
 
   # ===== System Services =====
   services = {
     libinput.enable = true;
-    spice-vdagentd.enable = true;
-    qemuGuest.enable = true;
     blueman.enable = true;
     pipewire = {
       enable = true;
@@ -87,20 +63,19 @@
     };
     dbus.enable = true;
     xserver = {
-      enable = true;
+      enable = false;
       videoDrivers = [ "amdgpu" ];
     };
+    udisks2.enable = true;
     openssh.enable = true;
     displayManager = {
       sddm = {
         enable = true;
         wayland.enable = true;
-
         package = pkgs.kdePackages.sddm;
       };
       sessionPackages = [ pkgs.hyprland ];
     };
-    gnome.gnome-settings-daemon.enable = true;
   };
 
   networking = {
@@ -163,37 +138,13 @@
   };
 
   # ===== Program Configurations =====
-  programs = {
-    git.enable = true;
-    gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
-    };
-    zsh.enable = true;
-  };
+
   programs.dconf.enable = true;
-
-  # ===== Font Configuration =====
-  fonts = {
-    fontDir.enable = true;
-    packages = with pkgs; [
-      noto-fonts
-      noto-fonts-emoji
-      noto-fonts-cjk
-      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-      noto-fonts-color-emoji
-      material-icons
-      font-awesome
-      atkinson-hyperlegible
-    ];
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
   };
-
-  # ===== Environment Configuration =====
-  environment = {
-    sessionVariables = {
-      NIXOS_OZONE_WL = "1";
-    };
-  };
+  programs.zsh.enable = true;
 
   # ===== System Version =====
   system.stateVersion = "24.11"; # Don't change this

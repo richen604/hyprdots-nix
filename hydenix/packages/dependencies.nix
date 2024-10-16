@@ -1,10 +1,13 @@
 { pkgs, ... }:
-
+let
+  fonts = import ../sources/hyde-fonts.nix { inherit pkgs; };
+in
 {
   home.packages = with pkgs; [
     # --------------------------------------------------- // Dependencies
     polkit_gnome # authentication agent
     xdg-desktop-portal-hyprland # xdg desktop portal for hyprland
+    xdg-desktop-portal-gtk # xdg desktop portal using gtk
     # TODO: build python-pyamdgpuinfo from https://github.com/mark9064/pyamdgpuinfo
     # python-pyamdgpuinfo # for amd gpu info
     parallel # for parallel processing
@@ -22,7 +25,6 @@
     libsForQt5.kwayland # for wayland support
     resvg # for svg thumbnails
     libnotify # for notifications
-    xdg-desktop-portal-gtk # xdg desktop portal using gtk
     emote # emoji picker gtk3
     flatpak # package manager for flathub
     envsubst # for environment variables
@@ -30,5 +32,10 @@
     wl-clipboard # clipboard for wayland
     gnumake # for building hyde
     hyprcursor # cursor theme
+    hyprutils # for hyprland utils
+    fonts # hyde fonts
+
+    # TODO: check these packages if they are even needed 
+    xdg-utils # for xdg-open
   ];
 }

@@ -26,15 +26,10 @@ let
       # remove continue 2 from restore_cfg.sh
       sed -i '/continue\ 2/d' ./Scripts/restore_cfg.sh
 
-      # nixify wallbashspotify.sh
-
-      # # add a rofi fix to hyprdots
-      # echo '
-      #   # rofi fix
-      #   windowrulev2 = float,class:^(Rofi)$
-      #   windowrulev2 = center,class:^(Rofi)$
-      #   windowrulev2 = noborder,class:^(Rofi)$
-      #   ' >> ./Configs/.config/hypr/windowrules.conf
+      # Replace gsettings commands with dconf equivalents
+      find . \( -type f -executable -o -name "*.conf" \) -print0 | xargs -0 sed -i \
+        -e 's/gsettings set \([^ ]*\) \([^ ]*\) \(.*\)/dconf write \/\1\/\2 "\3"/' \
+        -e 's/gsettings get \([^ ]*\) \([^ ]*\)/dconf read \/\1\/\2/'
     '';
 
     installPhase = ''

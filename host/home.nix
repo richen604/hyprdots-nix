@@ -11,18 +11,8 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
-    # ../modules/hyprdots
-    # ../modules/hyprdots-hyde.nix
-    ../modules/hydenix
+    ./hydenix
   ];
-
-  # programs.hyprdots = {
-  #   enable = true;
-  #   git = {
-  #     userName = "${gitUser}";
-  #     userEmail = "${gitEmail}";
-  #   };
-  # };
 
   modules.hydenix = {
     enable = true;
