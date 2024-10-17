@@ -53,13 +53,11 @@ let
         # update dunst
         find . -type f -print0 | xargs -0 sed -i 's/killall dunst/killall .dunst-wrapped/g'
 
+        # update kitty
+        find . -type f -print0 | xargs -0 sed -i 's/killall kitty/killall .kitty-wrapped/g'
+
         # remove continue 2 from Restore-Config
         sed -i '/continue\ 2/d' ./Scripts/Restore-Config
-
-         # Replace gsettings commands with dconf equivalents
-        find . \( -type f -executable -o -name "*.conf" \) -print0 | xargs -0 sed -i \
-          -e 's/gsettings set \([^ ]*\) \([^ ]*\) \(.*\)/dconf write \/\1\/\2 "\3"/' \
-          -e 's/gsettings get \([^ ]*\) \([^ ]*\)/dconf read \/\1\/\2/'
 
       # ------------- end edits ------------ #
 
@@ -87,8 +85,6 @@ let
         sed -i '/set_metadata/d' $out/lib/hyde-cli/Manage-Config
         sed -i '/set_metadata/d' $out/bin/Hyde-install
         sed -i '/set_metadata/d' $out/bin/Hyde
-
-
 
         # make all scripts executable
         chmod +x $out/lib/hyde-cli/*

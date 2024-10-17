@@ -23,13 +23,11 @@ let
       # update dunst
       find . -type f -print0 | xargs -0 sed -i 's/killall dunst/killall .dunst-wrapped/g'
 
+      # update kitty
+      find . -type f -print0 | xargs -0 sed -i 's/killall kitty/killall .kitty-wrapped/g'
+
       # remove continue 2 from restore_cfg.sh
       sed -i '/continue\ 2/d' ./Scripts/restore_cfg.sh
-
-      # Replace gsettings commands with dconf equivalents
-      find . \( -type f -executable -o -name "*.conf" \) -print0 | xargs -0 sed -i \
-        -e 's/gsettings set \([^ ]*\) \([^ ]*\) \(.*\)/dconf write \/\1\/\2 "\3"/' \
-        -e 's/gsettings get \([^ ]*\) \([^ ]*\)/dconf read \/\1\/\2/'
     '';
 
     installPhase = ''

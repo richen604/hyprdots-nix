@@ -1,5 +1,10 @@
 # This module extends home.file, xdg.configFile and xdg.dataFile with the `mutable` option.
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   fileOptionAttrPaths = [
     [
@@ -51,6 +56,11 @@ in
     );
 
   config = {
+    home.packages = with pkgs; [
+      file
+      findutils
+    ];
+
     home.activation.mutableFileGeneration =
       let
 
@@ -82,12 +92,25 @@ in
             else
               $DRY_RUN_CMD cp --remove-destination --no-preserve=mode ${source} ${target}
             fi
-            $DRY_RUN_CMD chmod -R u+wx ${target}
+            $DRY_RUN_CMD chmod -R u+w ${target}
+            # Check if the file is a script or binary before making it executable
+            if [ -d ${target} ]; then
+              find ${target} -type f -print0 | xargs -0 -I {} sh -c '
+                if ${pkgs.file}/bin/file -b "{}" | grep -qE "executable|script" || [[ "{}" == *.sh ]]; then
+                  $DRY_RUN_CMD chmod u+wx "{}"
+                fi
+              '
+            else
+              if ${pkgs.file}/bin/file -b ${target} | grep -qE "executable|script" || [[ ${target} == *.sh ]]; then
+                $DRY_RUN_CMD chmod u+wx ${target}
+              fi
+            fi
           ''
         );
 
         command =
           ''
+            export PATH="${pkgs.file}/bin:${pkgs.findutils}/bin:$PATH"
             echo "Copying mutable home files for $HOME"
           ''
           + lib.concatLines (map toCommand mutableFiles);

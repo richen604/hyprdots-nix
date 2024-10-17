@@ -12,16 +12,21 @@
   ];
 
   # ===== Boot Configuration =====
-  boot.loader.systemd-boot.enable = true;
+
   boot.kernelPackages = pkgs.linuxPackages_zen;
 
+  # disable if switching to grub
+  boot.loader.systemd-boot.enable = true;
   #! Enable grub below, note you will have to change to the new bios boot option for settings to apply
   # boot = {
   #   loader = {
-  #     efi.canTouchEfiVariables = true;
+  #     efi = {
+  #       canTouchEfiVariables = true;
+  #       efiSysMountPoint = "/boot/efi";
+  #     };
   #     grub = {
   #       enable = true;
-  #       device = "nodev";
+  #       devices = [ "nodev" ];
   #       efiSupport = true;
   #       useOSProber = true;
   #     };
@@ -76,6 +81,7 @@
       };
       sessionPackages = [ pkgs.hyprland ];
     };
+    upower.enable = true;
   };
 
   networking = {

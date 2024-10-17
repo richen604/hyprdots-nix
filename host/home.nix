@@ -11,7 +11,7 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
-    ./hydenix
+    ../hydenix
   ];
 
   modules.hydenix = {

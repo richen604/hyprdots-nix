@@ -44,7 +44,7 @@
     in
     {
       nixosConfigurations = {
-        hyprdots-nix = mkHost {
+        hydenix = mkHost {
           inherit
             pkgs
             nixpkgs
@@ -59,7 +59,7 @@
           spicetify-nix = inputs.spicetify-nix;
         };
 
-        hyprdots-nix-vm = mkVM {
+        hydenix-vm = mkVM {
           nixosSystem = mkHost {
             inherit
               nixpkgs
@@ -78,9 +78,9 @@
       };
 
       packages.${system} = {
-        default = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
-        hyprdots-nix-vm = self.nixosConfigurations.hyprdots-nix-vm.config.system.build.vm;
-        hyprdots-nix = self.nixosConfigurations.hyprdots-nix.config.system.build.toplevel;
+        default = self.nixosConfigurations.hydenix-vm.config.system.build.vm;
+        hydenix-vm = self.nixosConfigurations.hydenix-vm.config.system.build.vm;
+        hydenix = self.nixosConfigurations.hydenix.config.system.build.toplevel;
       };
 
       homeConfigurations = {

@@ -34,6 +34,8 @@ in
     hyprcursor # cursor theme
     hyprutils # for hyprland utils
     fonts # hyde fonts
+    upower # for battery status
+    dbus
 
     # TODO: check these packages if they are even needed 
     xdg-utils # for xdg-open
