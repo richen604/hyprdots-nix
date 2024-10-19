@@ -1,28 +1,16 @@
 {
   nixpkgs,
   home-manager,
-  username,
-  gitUser,
-  gitEmail,
-  host,
   system,
-  defaultPassword,
   pkgs,
-  spicetify-nix,
+  userConfig,
 }:
 
 nixpkgs.lib.nixosSystem {
   inherit system;
   specialArgs = {
-    inherit
-      pkgs
-      username
-      gitUser
-      gitEmail
-      host
-      spicetify-nix
-      defaultPassword
-      ;
+    inherit pkgs;
+    inherit userConfig;
   };
   modules = [
     ./configuration.nix
@@ -30,21 +18,15 @@ nixpkgs.lib.nixosSystem {
     {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      home-manager.users.${username} =
+      home-manager.users.${userConfig.username} =
         { pkgs, ... }:
         {
           imports = [
             ./home.nix
-            spicetify-nix.homeManagerModules.default
           ];
         };
       home-manager.extraSpecialArgs = {
-        inherit
-          username
-          gitUser
-          gitEmail
-          spicetify-nix
-          ;
+        inherit userConfig;
       };
     }
   ];

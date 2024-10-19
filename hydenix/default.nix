@@ -1,5 +1,6 @@
 {
   config,
+  userConfig,
   lib,
   pkgs,
   ...
@@ -8,7 +9,7 @@
 with lib;
 
 let
-  cfg = config.modules.hydenix;
+  cfg = config.hydenix;
 in
 {
   imports = [
@@ -17,7 +18,7 @@ in
     ./programs
   ];
 
-  options.modules.hydenix = {
+  options.hydenix = {
     enable = mkEnableOption "hydenix";
     git = {
       userName = mkOption {
@@ -32,10 +33,14 @@ in
   };
 
   config = mkIf cfg.enable {
+
     modules = {
       hyde.enable = true;
       hyde-cli.enable = true;
     };
+
+    home.username = userConfig.username;
+    home.homeDirectory = "/home/${userConfig.username}";
 
     fonts.fontconfig.enable = true;
 

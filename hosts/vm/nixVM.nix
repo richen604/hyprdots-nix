@@ -1,16 +1,14 @@
-{ username, ... }:
-{ nixosSystem, ... }:
+{ userConfig, nixosSystem, ... }:
 nixosSystem.extendModules {
   modules = [
     (
       { config, pkgs, ... }:
       {
-        virtualisation.libvirtd.enable = true;
         virtualisation.vmVariant = {
           virtualisation = {
-            memorySize = 8192;
-            cores = 4;
-            diskSize = 20480;
+            memorySize = userConfig.vm.memorySize;
+            cores = userConfig.vm.cores;
+            diskSize = userConfig.vm.diskSize;
             qemu = {
               options = [
                 "-device virtio-vga-gl"
@@ -21,11 +19,14 @@ nixosSystem.extendModules {
           services.xserver = {
             displayManager.autoLogin = {
               enable = true;
-              user = username;
+              user = userConfig.username;
             };
-            videoDrivers = [ "virtio" ];
+            videoDrivers = [
+              "virtio"
+            ];
           };
         };
+        virtualisation.libvirtd.enable = true;
         environment.systemPackages = with pkgs; [
           open-vm-tools
           spice-vdagent
@@ -34,6 +35,10 @@ nixosSystem.extendModules {
         services.spice-vdagentd = {
           enable = true;
         };
+        hardware.graphics.enable = true;
+        services.xserver.displayManager.sessionCommands = ''
+          ${pkgs.spice-vdagent}/bin/spice-vdagent
+        '';
       }
     )
   ];

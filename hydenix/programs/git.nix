@@ -1,7 +1,7 @@
 { config, ... }:
 
 let
-  cfg = config.modules.hydenix;
+  cfg = config.hydenix;
 in
 {
   programs.git = {

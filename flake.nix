@@ -8,10 +8,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -20,60 +16,39 @@
       nixpkgs,
       home-manager,
       ...
-    }@inputs:
+    }:
     let
+      # System and package configuration
       system = "x86_64-linux";
-
-      username = "editme";
-      gitUser = "editme";
-      gitEmail = "editme";
-      host = "editme";
-
-      # you need to change this with passwd when you boot
-      # root will have the same password
-      defaultPassword = "editme";
-
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
         config.allowUnfreePredicate = _: true;
       };
-      mkHost = import ./host/default.nix;
-      mkVM = import ./host/mkVM.nix { inherit username; };
 
+      # Import helper functions and configurations
+      mkNixosHost = import ./hosts/nixos;
+      nixVM = import ./hosts/vm/nixVM.nix;
+      userConfig = import ./config.nix;
+
+      # Common arguments for NixOS configurations
+      commonArgs = {
+        inherit
+          nixpkgs
+          pkgs
+          home-manager
+          system
+          userConfig
+          ;
+      };
     in
     {
       nixosConfigurations = {
-        hydenix = mkHost {
-          inherit
-            pkgs
-            nixpkgs
-            home-manager
-            username
-            gitUser
-            gitEmail
-            host
-            defaultPassword
-            system
-            ;
-          spicetify-nix = inputs.spicetify-nix;
-        };
+        hydenix = mkNixosHost commonArgs;
 
-        hydenix-vm = mkVM {
-          nixosSystem = mkHost {
-            inherit
-              nixpkgs
-              pkgs
-              home-manager
-              username
-              gitUser
-              gitEmail
-              host
-              defaultPassword
-              system
-              ;
-            spicetify-nix = inputs.spicetify-nix;
-          };
+        hydenix-vm = nixVM {
+          inherit userConfig;
+          nixosSystem = mkNixosHost commonArgs;
         };
       };
 
@@ -81,20 +56,15 @@
         default = self.nixosConfigurations.hydenix-vm.config.system.build.vm;
         hydenix-vm = self.nixosConfigurations.hydenix-vm.config.system.build.vm;
         hydenix = self.nixosConfigurations.hydenix.config.system.build.toplevel;
+        gen-config = pkgs.writeShellScriptBin "gen-config" (builtins.readFile ./scripts/gen-config.sh);
       };
 
-      homeConfigurations = {
-        ${username} = home-manager.lib.homeManagerConfiguration {
+      homeManagerModules.default = {
+        ${userConfig.username} = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [
-            ./host/home.nix
-          ];
+          modules = [ ./hosts/nixos/home.nix ];
           extraSpecialArgs = {
-            inherit
-              username
-              gitUser
-              gitEmail
-              ;
+            inherit userConfig;
           };
         };
       };

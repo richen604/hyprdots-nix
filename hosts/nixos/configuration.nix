@@ -1,8 +1,6 @@
 {
   pkgs,
-  username,
-  host,
-  defaultPassword,
+  userConfig,
   ...
 }:
 {
@@ -85,7 +83,7 @@
   };
 
   networking = {
-    hostName = host;
+    hostName = userConfig.host;
     networkmanager.enable = true;
   };
   networking.firewall = {
@@ -110,14 +108,14 @@
   i18n.defaultLocale = "en_CA.UTF-8";
 
   # ===== User Configuration =====
-  users.users.${username} = {
+  users.users.${userConfig.username} = {
     isNormalUser = true;
     extraGroups = [
       "wheel"
       "networkmanager"
       "video"
     ];
-    initialPassword = defaultPassword;
+    initialPassword = userConfig.defaultPassword;
   };
   users.defaultUserShell = pkgs.zsh;
 
