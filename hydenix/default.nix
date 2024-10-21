@@ -10,10 +10,18 @@ with lib;
 
 let
   cfg = config.hydenix;
+  catppuccinMocha = import ./packages/themes/Catppuccin-Mocha.nix { inherit pkgs; };
+  sessionVars = builtins.trace "Input: catppuccinMocha" (
+    let
+      result = import ./modules/theme/sessionVars.nix catppuccinMocha;
+    in
+    builtins.trace "Output: ${builtins.toJSON result}" result
+  );
 in
 {
   imports = [
     ./modules
+    ./modules/mutable
     ./packages
     ./programs
   ];
@@ -30,14 +38,14 @@ in
         description = "Git user email";
       };
     };
+    themes = mkOption {
+      type = types.listOf types.str;
+      default = [ "Catppuccin Mocha" ];
+      description = "List of theme names to install. The last one will be set as the current theme.";
+    };
   };
 
   config = mkIf cfg.enable {
-
-    modules = {
-      hyde.enable = true;
-      hyde-cli.enable = true;
-    };
 
     home.username = userConfig.username;
     home.homeDirectory = "/home/${userConfig.username}";
@@ -79,7 +87,6 @@ in
         userName = cfg.git.userName;
         userEmail = cfg.git.userEmail;
       };
-
       zsh.enable = true;
     };
 
@@ -87,14 +94,26 @@ in
       blueman-applet.enable = true;
     };
 
-    home.sessionVariables = {
-      ELECTRON_OZONE_PLATFORM_HINT = "auto";
-      MOZ_ENABLE_WAYLAND = 1;
-      XDG_SESSION_TYPE = "wayland";
-      QT_QPA_PLATFORM = "wayland";
-      GDK_BACKEND = "wayland";
-      NIXOS_OZONE_WL = "1";
-      EDITOR = "nvim";
-    };
+    home.file = lib.mkMerge [
+      (import ./modules/theme/homeFile.nix { inherit pkgs lib; } catppuccinMocha)
+    ];
+
+    home.packages = [
+      catppuccinMocha.pkg
+    ];
+
+    home.sessionVariables = lib.mkMerge [
+      {
+        ELECTRON_OZONE_PLATFORM_HINT = "auto";
+        MOZ_ENABLE_WAYLAND = 1;
+        XDG_SESSION_TYPE = "wayland";
+        QT_QPA_PLATFORM = "wayland";
+        GDK_BACKEND = "wayland";
+        NIXOS_OZONE_WL = "1";
+        EDITOR = "nvim";
+      }
+      sessionVars
+    ];
+
   };
 }

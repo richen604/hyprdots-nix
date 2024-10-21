@@ -12,6 +12,9 @@
       userName = "${userConfig.gitUser}";
       userEmail = "${userConfig.gitEmail}";
     };
+    themes = [
+      "Catppuccin Mocha"
+    ];
   };
 
   home.stateVersion = "24.11";

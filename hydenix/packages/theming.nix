@@ -16,9 +16,9 @@
     glib # gtk theme management
     gsettings-desktop-schemas # gsettings schemas
     desktop-file-utils # for updating desktop database
-    (tela-circle-icon-theme.override {
-      colorVariants = [ "dracula" ];
-    }) # icon theme with dracula dark variant
+    # (tela-circle-icon-theme.override {
+    #   colorVariants = [ "dracula" ];
+    # }) # icon theme with dracula dark variant
     bibata-cursors # cursor theme
   ];
 }

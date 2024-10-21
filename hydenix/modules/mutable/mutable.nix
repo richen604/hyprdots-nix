@@ -88,11 +88,13 @@ in
           ''
             $VERBOSE_ECHO "Copying mutable file: ${source} -> ${target}"
             if [ ${recursiveFlag} != "" ]; then
-              $DRY_RUN_CMD cp -R --remove-destination --no-preserve=mode ${source}/. ${target}
+              $DRY_RUN_CMD cp -r --remove-destination --no-preserve=mode ${source}/. ${target}
             else
               $DRY_RUN_CMD cp --remove-destination --no-preserve=mode ${source} ${target}
             fi
+
             $DRY_RUN_CMD chmod -R u+w ${target}
+
             # Check if the file is a script or binary before making it executable
             if [ -d ${target} ]; then
               find ${target} -type f -print0 | xargs -0 -I {} sh -c '

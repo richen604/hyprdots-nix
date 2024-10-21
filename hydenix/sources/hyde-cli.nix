@@ -59,7 +59,10 @@ let
         # remove continue 2 from Restore-Config
         sed -i '/continue\ 2/d' ./Scripts/Restore-Config
 
-      # ------------- end edits ------------ #
+        # delete line 169 from Patch-Theme
+        sed -i '169d' ./Scripts/Patch-Theme
+        
+      # ------------- end edits ------------ #;
 
         mkdir -p $out/share/Hyde-cli
         cp -r . $out/share/Hyde-cli

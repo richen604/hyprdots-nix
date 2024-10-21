@@ -9,5 +9,6 @@
     ./shell.nix
     ./gaming.nix
     ./music.nix
+    ./custom
   ];
 }
