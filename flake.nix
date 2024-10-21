@@ -41,6 +41,8 @@
           userConfig
           ;
       };
+
+      archVMConfig = import ./hosts/vm/arch-vm.nix;
     in
     {
       nixosConfigurations = {
@@ -57,6 +59,16 @@
         hydenix-vm = self.nixosConfigurations.hydenix-vm.config.system.build.vm;
         hydenix = self.nixosConfigurations.hydenix.config.system.build.toplevel;
         gen-config = pkgs.writeShellScriptBin "gen-config" (builtins.readFile ./scripts/gen-config.sh);
+
+        # Add this new package
+        build-arch-vm =
+          (archVMConfig {
+            inherit pkgs userConfig;
+          }).build-vm;
+        run-arch-vm =
+          (archVMConfig {
+            inherit pkgs userConfig;
+          }).run-vm;
       };
 
       homeManagerModules.default = {

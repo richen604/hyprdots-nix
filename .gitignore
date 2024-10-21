@@ -4,3 +4,4 @@ result
 .vscode
 *.log
 *.tmp
+output-*

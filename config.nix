@@ -9,6 +9,8 @@
     post install this will run passwd by default
   */
   defaultPassword = "changeme";
+  timezone = "America/Vancouver";
+  locale = "en_CA.UTF-8";
   vm = {
     # 4 GB minimum
     memorySize = 8192;

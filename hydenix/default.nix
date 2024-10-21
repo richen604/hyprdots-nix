@@ -100,6 +100,8 @@ in
 
     home.packages = [
       catppuccinMocha.pkg
+      catppuccinMocha.arcs.icon.package
+      catppuccinMocha.arcs.gtk.package
     ];
 
     home.sessionVariables = lib.mkMerge [
